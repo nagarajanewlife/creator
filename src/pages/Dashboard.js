@@ -6,35 +6,36 @@ import {
   Box,
   TextField,
   Button,
-  ButtonGroup,
-  Checkbox,
-  Rating,
   Autocomplete,
   Drawer,
   AppBar,
   Toolbar,
   Typography,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import CheckIcon from "@mui/icons-material/Check";
-import StarIcon from "@mui/icons-material/Star";
 import "../App.css";
+import bg from "./bg/dd.png";
 
 const initialTasks = [
   {
     id: "task1",
-    content: <TextField placeholder="Input for Task 1" variant="outlined" />,
+    type: "TextField",
+    content: <TextField placeholder="Input" variant="outlined" />,
+    properties: { placeholder: "Input", name: "", id: "" },
   },
+
   {
     id: "task2",
-    content: (
-      <Button variant="contained" startIcon={<AddIcon />}>
-        Button 1
-      </Button>
-    ),
+    type: "Button",
+    content: <Button variant="contained">Button</Button>,
+    properties: { name: "Button", color: "primary", size: "medium" },
   },
   {
     id: "task3",
+    type: "Autocomplete",
     content: (
       <Autocomplete
         options={["Option 1", "Option 2", "Option 3"]}
@@ -43,6 +44,7 @@ const initialTasks = [
         )}
       />
     ),
+    properties: { options: ["Option 1", "Option 2", "Option 3"] },
   },
 ];
 
@@ -53,7 +55,7 @@ const ItemType = {
 const DraggableTask = ({ task, onClick }) => {
   const [{ isDragging }, drag] = useDrag({
     type: ItemType.TASK,
-    item: { content: task.content },
+    item: { task },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -71,10 +73,10 @@ const DraggableTask = ({ task, onClick }) => {
   );
 };
 
-const DropArea = ({ onDrop }) => {
+const DropArea = ({ droppedInputs, onDrop, onTaskClick }) => {
   const [{ isOver }, drop] = useDrop({
     accept: ItemType.TASK,
-    drop: (item) => onDrop(item.content),
+    drop: (item) => onDrop(item.task),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
@@ -84,16 +86,45 @@ const DropArea = ({ onDrop }) => {
     <div
       ref={drop}
       style={{
-        background: isOver ? "lightgreen" : "lightgray",
+        background: isOver ? "lightgreen" : "white",
         padding: "20px",
         margin: "10px 0",
-        minHeight: "100px",
-        border: "1px dashed #000",
-        width: "70%",
         boxSizing: "border-box",
       }}
     >
-      {isOver ? "Drop here to add input field" : "Drag and drop a task here"}
+      {droppedInputs.map((task, index) => (
+        <div
+          key={index}
+          style={{ margin: "10px 0", width: "100%" }}
+          onClick={() => onTaskClick(task)}
+        >
+          {task.content}
+        </div>
+      ))}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100px",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {isOver ? "Drop here to add input field" : "Drag a field here "}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100px",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <img src={bg} alt="bg" width="80px" height="80px" />
+      </div>
     </div>
   );
 };
@@ -103,19 +134,13 @@ function App() {
   const [droppedInputs, setDroppedInputs] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [placeholder, setPlaceholder] = useState("");
 
-  const handleDrop = (content) => {
-    setDroppedInputs((prev) => [...prev, content]);
+  const handleDrop = (task) => {
+    setDroppedInputs((prev) => [...prev, task]);
   };
 
   const handleTaskClick = (task) => {
     setSelectedTask(task);
-    if (task.id === "task1") {
-      setPlaceholder("Input for Task 1");
-    } else {
-      setPlaceholder(""); // Reset for other tasks
-    }
     setDrawerOpen(true);
   };
 
@@ -123,72 +148,204 @@ function App() {
     setDrawerOpen(false);
   };
 
-  const handlePlaceholderChange = (event) => {
-    setPlaceholder(event.target.value);
+  const handlePropertyChange = (event) => {
+    const { name, value } = event.target;
+    setSelectedTask((prevTask) => ({
+      ...prevTask,
+      properties: {
+        ...prevTask.properties,
+        [name]: value,
+      },
+    }));
   };
 
   const handleSave = () => {
-    // Here you can implement the logic to save the changes
-    console.log(`New Placeholder: ${placeholder}`);
-    handleDrawerClose();
+    setDroppedInputs((prevInputs) =>
+      prevInputs.map((task) =>
+        task.id === selectedTask.id
+          ? {
+              ...selectedTask,
+              content: renderUpdatedContent(selectedTask),
+            }
+          : task
+      )
+    );
+    setDrawerOpen(false);
+  };
+
+  const renderUpdatedContent = (task) => {
+    const { type, properties } = task;
+
+    switch (type) {
+      case "TextField":
+        return (
+          <TextField
+            placeholder={properties.placeholder}
+            variant="outlined"
+            name={properties.name}
+            id={properties.id}
+          />
+        );
+      case "Button":
+        return (
+          <Button
+            variant="contained"
+            color={properties.color}
+            size={properties.size}
+          >
+            {properties.name}
+          </Button>
+        );
+      case "Autocomplete":
+        return (
+          <Autocomplete
+            options={properties.options}
+            renderInput={(params) => (
+              <TextField {...params} label="Select an option" />
+            )}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderPropertyFields = () => {
+    if (!selectedTask) return null;
+
+    const { type, properties } = selectedTask;
+
+    switch (type) {
+      case "TextField":
+        return (
+          <>
+            <TextField
+              label="Placeholder"
+              name="placeholder"
+              value={properties.placeholder}
+              onChange={handlePropertyChange}
+              fullWidth
+            />
+            <TextField
+              label="Name"
+              name="name"
+              value={properties.name}
+              onChange={handlePropertyChange}
+              fullWidth
+              sx={{ marginTop: 2 }}
+            />
+            <TextField
+              label="ID"
+              name="id"
+              value={properties.id}
+              onChange={handlePropertyChange}
+              fullWidth
+              sx={{ marginTop: 2 }}
+            />
+          </>
+        );
+      case "Button":
+        return (
+          <>
+            <TextField
+              label="Button Name"
+              name="name"
+              value={properties.name}
+              onChange={handlePropertyChange}
+              fullWidth
+            />
+            <FormControl fullWidth sx={{ marginTop: 2 }}>
+              <InputLabel>Color</InputLabel>
+              <Select
+                name="color"
+                value={properties.color}
+                onChange={handlePropertyChange}
+              >
+                <MenuItem value="primary">Primary</MenuItem>
+                <MenuItem value="secondary">Secondary</MenuItem>
+                <MenuItem value="success">Success</MenuItem>
+                <MenuItem value="error">Error</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl fullWidth sx={{ marginTop: 2 }}>
+              <InputLabel>Size</InputLabel>
+              <Select
+                name="size"
+                value={properties.size}
+                onChange={handlePropertyChange}
+              >
+                <MenuItem value="small">Small</MenuItem>
+                <MenuItem value="medium">Medium</MenuItem>
+                <MenuItem value="large">Large</MenuItem>
+              </Select>
+            </FormControl>
+          </>
+        );
+      case "Autocomplete":
+        return (
+          <>
+            <TextField
+              label="Options (comma separated)"
+              name="options"
+              value={properties.options.join(", ")}
+              onChange={(e) =>
+                handlePropertyChange({
+                  target: {
+                    name: "options",
+                    value: e.target.value.split(",").map((opt) => opt.trim()),
+                  },
+                })
+              }
+              fullWidth
+            />
+          </>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <Grid container spacing={2}>
-        {/* First Column - 25% */}
         <Grid item xs={3}>
           <div className="task-list">
             {tasks.map((task) => (
-              <DraggableTask key={task.id} task={task} />
+              <DraggableTask
+                key={task.id}
+                task={task}
+                onClick={handleTaskClick}
+              />
             ))}
           </div>
         </Grid>
-
-        {/* Second Column - 75% */}
         <Grid item xs={9}>
           <Box sx={{ padding: "10px" }}>
-            <DropArea onDrop={handleDrop} />
-            {droppedInputs.map((input, index) => (
-              <div
-                style={{ background: "lightgreen" }}
-                key={index}
-                style={{ margin: "10px 0", width: "100%", height: "100%" }}
-                onClick={handleTaskClick}
-              >
-                {input}
-              </div>
-            ))}
+            <DropArea
+              droppedInputs={droppedInputs}
+              onDrop={handleDrop}
+              onTaskClick={handleTaskClick}
+            />
           </Box>
         </Grid>
       </Grid>
 
-      {/* Drawer for modifying task properties */}
       <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
         <AppBar position="relative">
           <Toolbar>
             <Typography variant="h6">Edit Task</Typography>
           </Toolbar>
         </AppBar>
-        <Box sx={{ padding: 2, width: 250 }}>
-          {selectedTask && (
-            <div>
-              <TextField
-                label="Placeholder"
-                value={placeholder}
-                onChange={handlePlaceholderChange}
-                fullWidth
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-                sx={{ marginTop: 2 }}
-              >
-                Save
-              </Button>
-            </div>
-          )}
+        <Box sx={{ padding: 2, width: 300 }}>
+          {renderPropertyFields()}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            sx={{ marginTop: 2 }}
+          >
+            Save
+          </Button>
         </Box>
       </Drawer>
     </DndProvider>
