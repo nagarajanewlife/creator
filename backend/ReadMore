@@ -1,0 +1,7 @@
+# npm run server  using
+
+1.npm install nodemon --save-dev
+# create the route file
+# db password
+ MONGODB_URI='mongodb+srv://wohozo:748xISI6Cjs33Znl@cluster0.sqic5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+
