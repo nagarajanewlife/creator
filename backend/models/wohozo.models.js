@@ -1,25 +1,36 @@
 import { Schema, model } from "mongoose";
-const schema = new Schema({
+
+// User schema definition
+const userSchema = new Schema({
   uid: {
     type: String,
-    required: true,
-    unique: true,
   },
   displayName: {
     type: String,
-    required: true,
-    unique: true,
   },
   email: {
     type: String,
     required: true,
-    unique: true,
+    unique: true, // Unique constraint on email
   },
   photoURL: {
     type: String,
   },
 });
-// Create your model
-const Wohozouser = model("Wohozouser", schema);
 
-export default Wohozouser;
+// Dashboard schema definition
+const dashSchema = new Schema({
+  uid: {
+    type: String,
+  },
+  dashName: {
+    type: String,
+  },
+});
+
+// Create models
+const Wohozouser = model("Wohozouser", userSchema);
+const Wohozodash = model("Wohozodash", dashSchema);
+
+// Export both models
+export { Wohozouser, Wohozodash };

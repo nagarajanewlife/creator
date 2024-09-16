@@ -1,7 +1,11 @@
 import express from "express";
-import { UserCreate } from "../controllers/wohozo.controllers.js";
+import {
+  UserCreate,
+  DashboardCreate,
+} from "../controllers/wohozo.controllers.js";
 const router = express.Router();
 
-router.post("/useradd", UserCreate);
+router.post("/addUser", UserCreate);
+router.post("/createDashboard", DashboardCreate);
 
 export default router;

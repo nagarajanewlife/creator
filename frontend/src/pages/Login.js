@@ -16,16 +16,17 @@ function Login() {
           email: userData.user.email,
           photoURL: userData.user.photoURL,
         };
-        console.log("send data", userData);
+        console.log("send data", user);
 
         axios
-          .post("http://localhost:6969/useradd", user)
+          .post("http://localhost:6969/addUser", user)
           .then((response) => {
             console.log("Data successfully sent:", response.data);
             alert("user added sucessfully");
           })
           .catch((error) => {
             console.error("Error sending data:", error);
+            alert(error);
           });
         // Navigate to /createnewdashbored on successful login
 
