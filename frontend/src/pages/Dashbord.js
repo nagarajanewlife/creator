@@ -12,6 +12,7 @@ import TextField from "@mui/material/TextField";
 export default function Dashboard() {
   const [uid, setUid] = useState(null); // Store user UID
   const [dashName, setDashName] = useState(""); // Store dashboard name input
+  const [dashapps, setDashApps] = useState("");
   const [open, setOpen] = useState(false); // Modal open state
   const navigate = useNavigate();
 
@@ -24,6 +25,23 @@ export default function Dashboard() {
       navigate("/"); // Redirect to login if user not authenticated
     }
   }, [navigate]);
+  useEffect(() => {
+    getApplication();
+  }, []);
+
+  const getApplication = () => {
+    axios
+      .get(
+        "http://localhost:6969/dashboardApplication/JP6NSsZlhNVZlAGRngzda5tcu0d2"
+      )
+      .then((response) => {
+        console.log("get Dashboard Apps:", response.data);
+        setDashApps(response.data);
+      })
+      .catch((error) => {
+        console.error("Error get dashboard Apps:", error);
+      });
+  };
 
   const handleLogout = () => {
     auth
@@ -68,6 +86,7 @@ export default function Dashboard() {
     setOpen(false);
     setDashName(""); // Reset the dashboard name input
   };
+  console.log("dashapps", dashapps);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -80,6 +99,31 @@ export default function Dashboard() {
         <Button variant="contained" color="primary" onClick={handleOpen}>
           + New Dashboard
         </Button>
+      </div>
+      <div>
+        {/* Check if dashapps exists and has items */}
+        {dashapps ? (
+          dashapps.map((arg) => (
+            <div
+              key={arg._id}
+              // onClick={() => handleClick(arg.uid)} // onClick event passes uid
+              style={{
+                width: "230px",
+                height: "233px",
+                border: "1px solid black",
+                padding: "10px",
+                margin: "10px",
+                cursor: "pointer",
+                background: "#80808042",
+              }}
+            >
+              {/* Display the dashName */}
+              {arg.dashName}
+            </div>
+          ))
+        ) : (
+          <p>No dashboards available.</p>
+        )}
       </div>
 
       {/* Dialog (Popup) for Dashboard Creation */}

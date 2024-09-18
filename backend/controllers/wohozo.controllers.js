@@ -32,3 +32,23 @@ export const DashboardCreate = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
+// get dashboard Application
+
+export const DashboardAppsDetails = async (req, res) => {
+  const { uid } = req.params; // Get UID from the route parameter
+  try {
+    if (!uid) {
+      return res.status(400).json({ message: "UID is required" });
+    }
+
+    const dashboards = await Wohozodash.find({ uid });
+    if (!dashboards.length) {
+      return res.status(404).json({ message: "No records found" });
+    }
+    res.status(200).json(dashboards);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
