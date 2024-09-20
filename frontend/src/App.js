@@ -8,7 +8,7 @@ import {
 import { auth } from "./components/firebase"; // assuming you have this file for Firebase config
 import Playground from "./pages/Playground";
 import Dashboard from "./pages/Dashbord";
-import Login from "./pages/Login";
+import Login from "./pages/AuthPage";
 
 function App() {
   const [user, setUser] = useState(null);

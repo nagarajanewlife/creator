@@ -128,7 +128,7 @@ export default function Dashboard() {
 
       {/* Dialog (Popup) for Dashboard Creation */}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Create New Dashboard</DialogTitle>
+        <DialogTitle>Create New Application</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
