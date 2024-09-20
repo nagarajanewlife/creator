@@ -43,7 +43,11 @@ export default function Dashboard() {
   const [anchorEl, setAnchorEl] = useState(null); // For profile menu popup
   const [appAnchorEl, setAppAnchorEl] = useState(null); // For app-specific menu
   const [selectedApp, setSelectedApp] = useState(null); // Store selected app for menu options
+  const [selectedDashboard, setSelectedDashboard] = useState(null);
   const navigate = useNavigate();
+  const handleCardClick = (id, dashName) => {
+    navigate(`/Playground?id=${id}&dashName=${dashName}`);
+  };
 
   // Fetch user data from Firebase Auth on component load
   useEffect(() => {
@@ -58,7 +62,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     getApplication();
-  }, []);
+  });
 
   const getApplication = () => {
     axios
@@ -240,54 +244,52 @@ export default function Dashboard() {
                     width: 300,
                     height: 300,
                     position: "relative",
-                    backgroundColor: "#f5f5f5",
+                    backgroundColor: "#fdfdff",
                   }}
+                  onClick={() => handleCardClick(app._id, app.dashName)} // Navigate to Playground with parameters
                 >
-                  <CardContent>
-                    {/* First letter and creation date at the top */}
-                    <CardActions
-                      sx={{
-                        justifyContent: "space-between",
-                        position: "relative", // Ensures content stays within the card
-                        paddingBottom: 0, // Removes bottom padding for a tight layout
-                      }}
-                    >
-                      <Box display="flex" alignItems="center">
-                        <Avatar sx={{ backgroundColor: "#27274A" }}>
-                          {app.dashName.charAt(0)}
-                        </Avatar>
-                      </Box>
-
-                      {/* Right side - Edit button */}
-                      {/* <IconButton>
-                        <Edit />
-                      </IconButton> */}
-
-                      {/* More options button */}
-                      <IconButton
-                        onClick={(event) => handleAppMenuOpen(event, app)}
+                  <CardActions
+                    sx={{
+                      justifyContent: "space-between",
+                      position: "relative",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                    }}
+                  >
+                    <Box>
+                      <Avatar
+                        sx={{
+                          backgroundColor: "#27274A",
+                          width: 66, // Set your desired width
+                          height: 66, // Set your desired height
+                        }}
                       >
-                        <MoreVert />
-                      </IconButton>
-                    </CardActions>
-
-                    {/* Dashboard name */}
-                    <Typography
-                      variant="h5"
-                      component="div"
-                      sx={{ marginTop: 2 }}
+                        {app.dashName.charAt(0)}
+                      </Avatar>
+                      <Typography variant="caption" component="div">
+                        {new Date(app.createdAt).toLocaleDateString()}
+                      </Typography>
+                    </Box>
+                    {/* <IconButton>
+                      <Edit />
+                    </IconButton> */}
+                    <IconButton
+                      onClick={(event) => handleAppMenuOpen(event, app)}
                     >
+                      <MoreVert />
+                    </IconButton>
+                  </CardActions>
+                  <CardContent>
+                    <Typography variant="h5" component="div">
                       {app.dashName}
-                    </Typography>
-                    <Typography variant="caption" sx={{ marginLeft: 1 }}>
-                      {new Date(app.createdAt).toLocaleDateString()}
                     </Typography>
                   </CardContent>
                 </Card>
               </Grid>
             ))
           ) : (
-            <Typography>No Application available.</Typography>
+            <Typography>No dashboards available.</Typography>
           )}
         </Grid>
 

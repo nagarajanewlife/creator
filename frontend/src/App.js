@@ -9,7 +9,8 @@ import { auth } from "./components/firebase"; // assuming you have this file for
 import Playground from "./pages/Playground";
 import Dashboard from "./pages/Dashbord";
 import Login from "./pages/AuthPage";
-
+import Publish from "./pages/Publish";
+import Edit from "./pages/Edit";
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,6 +43,11 @@ function App() {
           path="/playground"
           element={user ? <Playground /> : <Navigate to="/" />}
         />
+        <Route
+          path="/publish"
+          element={user ? <Publish /> : <Navigate to="/" />}
+        />
+        <Route path="/edit" element={user ? <Edit /> : <Navigate to="/" />} />
       </Routes>
     </Router>
   );
