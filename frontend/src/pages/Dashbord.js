@@ -97,7 +97,7 @@ export default function Dashboard() {
 
       <div style={{ marginTop: "20px" }}>
         <Button variant="contained" color="primary" onClick={handleOpen}>
-          + New Dashboard
+          + New Application
         </Button>
       </div>
       <div>
