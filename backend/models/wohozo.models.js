@@ -19,14 +19,21 @@ const userSchema = new Schema({
 });
 
 // Dashboard schema definition
-const dashSchema = new Schema({
-  uid: {
-    type: String,
+const dashSchema = new Schema(
+  {
+    uid: {
+      type: String,
+      required: true, // Mark as required if needed
+    },
+    dashName: {
+      type: String,
+      required: true, // Mark as required if needed
+    },
   },
-  dashName: {
-    type: String,
-  },
-});
+  {
+    timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
+  }
+);
 
 // Create models
 const Wohozouser = model("Wohozouser", userSchema);

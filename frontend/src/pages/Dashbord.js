@@ -1,46 +1,86 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../components/firebase"; // assuming you have this file for Firebase config
-import Button from "@mui/material/Button";
+import { auth } from "../components/firebase"; // Firebase config
 import axios from "axios";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Avatar,
+  Button,
+  Box,
+  TextField,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import {
+  MoreVert,
+  Edit,
+  Delete,
+  ContentCopy,
+  Info,
+  Block,
+} from "@mui/icons-material";
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function Dashboard() {
-  const [uid, setUid] = useState(null); // Store user UID
-  const [dashName, setDashName] = useState(""); // Store dashboard name input
-  const [dashapps, setDashApps] = useState("");
-  const [open, setOpen] = useState(false); // Modal open state
+  const [uid, setUid] = useState(null);
+  const [user, setUser] = useState(null); // Store user details
+  const [dashName, setDashName] = useState("");
+  const [dashapps, setDashApps] = useState([]);
+  const [filteredApps, setFilteredApps] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // For search
+  const [open, setOpen] = useState(false); // For dashboard creation dialog
+  const [anchorEl, setAnchorEl] = useState(null); // For profile menu popup
+  const [appAnchorEl, setAppAnchorEl] = useState(null); // For app-specific menu
+  const [selectedApp, setSelectedApp] = useState(null); // Store selected app for menu options
   const navigate = useNavigate();
 
   // Fetch user data from Firebase Auth on component load
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      setUid(user.uid); // Set UID from authenticated user
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setUser(currentUser);
+      setUid(currentUser.uid);
     } else {
       navigate("/"); // Redirect to login if user not authenticated
     }
   }, [navigate]);
+
   useEffect(() => {
     getApplication();
   }, []);
 
   const getApplication = () => {
     axios
-      .get(
-        "http://localhost:6969/dashboardApplication/JP6NSsZlhNVZlAGRngzda5tcu0d2"
-      )
+      .get(`http://localhost:6969/dashboardApplication/${user?.uid}`)
+
       .then((response) => {
-        console.log("get Dashboard Apps:", response.data);
         setDashApps(response.data);
+        setFilteredApps(response.data); // Initially show all apps
       })
       .catch((error) => {
-        console.error("Error get dashboard Apps:", error);
+        console.error("Error getting dashboard Apps:", error);
       });
+  };
+
+  // Handle search filter
+  const handleSearchChange = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    const filtered = dashapps.filter((app) =>
+      app.dashName.toLowerCase().includes(query)
+    );
+    setFilteredApps(filtered);
   };
 
   const handleLogout = () => {
@@ -61,14 +101,13 @@ export default function Dashboard() {
     }
 
     const sendData = { uid: uid, dashName: dashName };
-    console.log("senddata", sendData);
     axios
       .post("http://localhost:6969/createDashboard", sendData)
       .then((response) => {
-        console.log("Dashboard created successfully:", response.data);
         alert("Dashboard created successfully!");
-        setOpen(false); // Close modal after creation
-        setDashName(""); // Clear the input after creation
+        setOpen(false);
+        setDashName("");
+        getApplication(); // Refresh the list
       })
       .catch((error) => {
         console.error("Error creating dashboard:", error);
@@ -76,78 +115,237 @@ export default function Dashboard() {
       });
   };
 
-  // Open modal for creating dashboard
   const handleOpen = () => {
     setOpen(true);
   };
 
-  // Close modal without creating dashboard
   const handleClose = () => {
     setOpen(false);
-    setDashName(""); // Reset the dashboard name input
+    setDashName("");
   };
-  console.log("dashapps", dashapps);
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleAppMenuOpen = (event, app) => {
+    setAppAnchorEl(event.currentTarget);
+    setSelectedApp(app);
+  };
+
+  const handleAppMenuClose = () => {
+    setAppAnchorEl(null);
+  };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Dashboard</h1>
-      <Button variant="contained" color="secondary" onClick={handleLogout}>
-        Logout
-      </Button>
+    <Box sx={{ flexGrow: 1 }}>
+      {/* AppBar with custom background */}
+      <AppBar position="static" sx={{ backgroundColor: "#27274A" }}>
+        <Toolbar>
+          {/* Left side: Logo */}
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Wohozo Creator
+          </Typography>
 
-      <div style={{ marginTop: "20px" }}>
-        <Button variant="contained" color="primary" onClick={handleOpen}>
-          + New Application
-        </Button>
-      </div>
-      <div>
-        {/* Check if dashapps exists and has items */}
-        {dashapps ? (
-          dashapps.map((arg) => (
-            <div
-              key={arg._id}
-              // onClick={() => handleClick(arg.uid)} // onClick event passes uid
-              style={{
-                width: "230px",
-                height: "233px",
-                border: "1px solid black",
-                padding: "10px",
-                margin: "10px",
-                cursor: "pointer",
-                background: "#80808042",
-              }}
-            >
-              {/* Display the dashName */}
-              {arg.dashName}
+          {/* Right side: Profile */}
+          {user && (
+            <div>
+              <IconButton
+                edge="end"
+                aria-controls="profile-menu"
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <Avatar alt={user.displayName} src={user.photoURL} />
+              </IconButton>
+
+              {/* Profile menu */}
+              <Menu
+                id="profile-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+              >
+                <MenuItem disabled>Name: {user.displayName || "N/A"}</MenuItem>
+                <MenuItem disabled>Email: {user.email}</MenuItem>
+                <MenuItem disabled>UID: {user.uid}</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
             </div>
-          ))
-        ) : (
-          <p>No dashboards available.</p>
-        )}
-      </div>
+          )}
+        </Toolbar>
+      </AppBar>
+      <AppBar
+        position="static"
+        sx={{ backgroundColor: "white", boxShadow: "none" }}
+      >
+        <Toolbar>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, color: "black" }}
+          >
+            Welcome ,{user?.displayName}
+          </Typography>
+          {/* Search Box */}
+          <Box
+            sx={{ display: "flex", alignItems: "center", marginRight: "20px" }}
+          >
+            <SearchIcon />
+            <TextField
+              variant="outlined"
+              placeholder="Search..."
+              size="small"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              sx={{ marginLeft: 1, backgroundColor: "white" }} // Light gray background for search box
+            />
+          </Box>
+          {/* Profile Avatar */}
+          {user && (
+            <IconButton color="inherit">
+              <Button variant="contained" color="primary" onClick={handleOpen}>
+                + New Application
+              </Button>
+            </IconButton>
+          )}
+        </Toolbar>
+      </AppBar>
 
-      {/* Dialog (Popup) for Dashboard Creation */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Create New Application</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Dashboard Name"
-            fullWidth
-            value={dashName}
-            onChange={(e) => setDashName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleCreateDashboard} color="primary">
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+      {/* Main content */}
+      <Box sx={{ padding: "20px" }}>
+        {/* Button for creating a new application */}
+
+        {/* Grid of Dashboard Applications */}
+        <Grid container spacing={2} sx={{ marginTop: "20px" }}>
+          {filteredApps.length > 0 ? (
+            filteredApps.map((app) => (
+              <Grid item key={app._id} xs={12} sm={6} md={4} lg={3}>
+                <Card
+                  sx={{
+                    width: 300,
+                    height: 300,
+                    position: "relative",
+                    backgroundColor: "#f5f5f5",
+                  }}
+                >
+                  <CardContent>
+                    {/* First letter and creation date at the top */}
+                    <CardActions
+                      sx={{
+                        justifyContent: "space-between",
+                        position: "relative", // Ensures content stays within the card
+                        paddingBottom: 0, // Removes bottom padding for a tight layout
+                      }}
+                    >
+                      <Box display="flex" alignItems="center">
+                        <Avatar sx={{ backgroundColor: "#27274A" }}>
+                          {app.dashName.charAt(0)}
+                        </Avatar>
+                      </Box>
+
+                      {/* Right side - Edit button */}
+                      {/* <IconButton>
+                        <Edit />
+                      </IconButton> */}
+
+                      {/* More options button */}
+                      <IconButton
+                        onClick={(event) => handleAppMenuOpen(event, app)}
+                      >
+                        <MoreVert />
+                      </IconButton>
+                    </CardActions>
+
+                    {/* Dashboard name */}
+                    <Typography
+                      variant="h5"
+                      component="div"
+                      sx={{ marginTop: 2 }}
+                    >
+                      {app.dashName}
+                    </Typography>
+                    <Typography variant="caption" sx={{ marginLeft: 1 }}>
+                      {new Date(app.createdAt).toLocaleDateString()}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))
+          ) : (
+            <Typography>No Application available.</Typography>
+          )}
+        </Grid>
+
+        {/* App-specific menu */}
+        <Menu
+          anchorEl={appAnchorEl}
+          open={Boolean(appAnchorEl)}
+          onClose={handleAppMenuClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <MenuItem>
+            <ContentCopy fontSize="small" sx={{ marginRight: 1 }} />
+            Duplicate
+          </MenuItem>
+          <MenuItem>
+            <Info fontSize="small" sx={{ marginRight: 1 }} />
+            Summary
+          </MenuItem>
+          <MenuItem>
+            <Block fontSize="small" sx={{ marginRight: 1 }} />
+            Disable
+          </MenuItem>
+          <MenuItem>
+            <Delete fontSize="small" sx={{ marginRight: 1 }} />
+            Delete
+          </MenuItem>
+        </Menu>
+
+        {/* Dialog for creating a new dashboard */}
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Create New Application</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Dashboard Name"
+              fullWidth
+              value={dashName}
+              onChange={(e) => setDashName(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleCreateDashboard} color="primary">
+              Create
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    </Box>
   );
 }
