@@ -261,8 +261,8 @@ export default function Dashboard() {
                       <Avatar
                         sx={{
                           backgroundColor: "#27274A",
-                          width: 66, // Set your desired width
-                          height: 66, // Set your desired height
+                          width: 66,
+                          height: 66,
                         }}
                       >
                         {app.dashName.charAt(0)}
@@ -271,11 +271,13 @@ export default function Dashboard() {
                         {new Date(app.createdAt).toLocaleDateString()}
                       </Typography>
                     </Box>
-                    {/* <IconButton>
-                      <Edit />
-                    </IconButton> */}
+
+                    {/* The modified IconButton with event propagation control */}
                     <IconButton
-                      onClick={(event) => handleAppMenuOpen(event, app)}
+                      onClick={(event) => {
+                        event.stopPropagation(); // Prevents the Card's onClick from firing
+                        handleAppMenuOpen(event, app); // Opens the app menu
+                      }}
                     >
                       <MoreVert />
                     </IconButton>
