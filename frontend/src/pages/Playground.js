@@ -20,6 +20,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ListIcon from "@mui/icons-material/List";
+import { InputAdornment } from "@mui/material";
+import { AccountCircle, Visibility } from "@mui/icons-material";
 import {
   Grid,
   Box,
@@ -344,24 +346,41 @@ const DropArea = ({
 
               // Example of customizing the size
               style: {
-                width: "300px", // Custom width
-                height: "40px", // Custom height
+                width: "750px", // Custom width
+                height: "99%",
+                border: "1px dashed #3987d9", // Custom height
               },
 
               // If task.content is a Material-UI TextField, you can also pass inputProps
-              inputProps: {
-                style: {
-                  padding: "10px", // Custom padding
-                },
-              },
 
+              InputProps: {
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <IconButton
+                      onClick={() => onDeleteTask(task.id)}
+                      sx={{
+                        color: "default", // Default color (inherit or any other default color)
+                        marginLeft: "157%",
+                        "&:hover": {
+                          color: "red", // Color on hover
+                        },
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
               // If it's a MUI Button or TextField, you can pass size prop
               size: "small", // small, medium, large (MUI components)
 
               // You can also apply fullWidth for TextField-like components
               fullWidth: true, // Example for MUI TextField or similar components
             })}
-            {hoveredTask === index && (
+            {/* {hoveredTask === index && (
               <IconButton
                 onClick={() => onDeleteTask(task.id)}
                 sx={{
@@ -369,12 +388,12 @@ const DropArea = ({
                   right: 0,
                   top: 0,
                   color: "red",
-                  marginRight: -14,
+                  marginRight: -67,
                 }}
               >
                 <DeleteIcon />
               </IconButton>
-            )}
+            )} */}
           </div>
         </>
       ))}
@@ -468,6 +487,7 @@ function App() {
       });
   };
   const handleDeleteTask = (id) => {
+    alert("confirm delete");
     setDroppedInputs((prev) => prev.filter((task) => task.id !== id)); // Remove task by id
   };
   const handleReset = () => {
