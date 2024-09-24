@@ -10,6 +10,16 @@ import { DndProvider, useDrag, useDrop } from "react-dnd";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import EmailIcon from "@mui/icons-material/Email";
+import HomeIcon from "@mui/icons-material/Home";
+import PhoneIcon from "@mui/icons-material/Phone";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
+import NumbersIcon from "@mui/icons-material/Numbers";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import ListIcon from "@mui/icons-material/List";
 import {
   Grid,
   Box,
@@ -33,6 +43,8 @@ const initialTasks = [
     id: "email",
     type: "Email",
     content: <TextField type="email" label="Email" variant="outlined" />,
+    design: { icon: <EmailIcon sx={{ fontSize: 35 }} />, label: "Email" },
+    position: "basic",
     properties: {
       label: "Email",
       placeholder: "Enter your email",
@@ -44,6 +56,8 @@ const initialTasks = [
     id: "address",
     type: "Address",
     content: <TextField label="Address" variant="outlined" />,
+    design: { icon: <HomeIcon />, label: "Address" },
+    position: "Special",
     properties: {
       label: "Address",
       placeholder: "Enter your address",
@@ -55,6 +69,8 @@ const initialTasks = [
     id: "phone",
     type: "Phone",
     content: <TextField type="tel" label="Phone" variant="outlined" />,
+    design: { icon: <PhoneIcon />, label: "Phone" },
+    position: "Advanced",
     properties: {
       label: "Phone",
       placeholder: "Enter your phone",
@@ -66,6 +82,8 @@ const initialTasks = [
     id: "singleLine",
     type: "Single Line",
     content: <TextField label="Single Line" variant="outlined" />,
+    design: { icon: <TextFieldsIcon />, label: "Single Line" },
+    position: "Advanced",
     properties: {
       label: "Single Line",
       placeholder: "Enter text",
@@ -79,6 +97,8 @@ const initialTasks = [
     content: (
       <TextField label="Multi Line" variant="outlined" multiline rows={4} />
     ),
+    design: { icon: <TextFieldsIcon />, label: "Multi Line" },
+    position: "Advanced",
     properties: {
       label: "Multi Line",
       placeholder: "Enter multiple lines",
@@ -90,6 +110,8 @@ const initialTasks = [
     id: "number",
     type: "Number",
     content: <TextField type="number" label="Number" variant="outlined" />,
+    design: { icon: <NumbersIcon />, label: "Number" },
+    position: "basic",
     properties: {
       label: "Number",
       placeholder: "Enter a number",
@@ -108,6 +130,8 @@ const initialTasks = [
         variant="outlined"
       />
     ),
+    design: { icon: <DateRangeIcon />, label: "Date" },
+    position: "basic",
     properties: { label: "Date", placeholder: "", name: "", id: "" },
   },
   {
@@ -121,6 +145,8 @@ const initialTasks = [
         variant="outlined"
       />
     ),
+    design: { icon: <AccessTimeIcon />, label: "Time" },
+    position: "basic",
     properties: { label: "Time", placeholder: "", name: "", id: "" },
   },
   {
@@ -142,6 +168,8 @@ const initialTasks = [
         </RadioGroup>
       </FormControl>
     ),
+    design: { icon: <RadioButtonCheckedIcon />, label: "Radio" },
+    position: "basic",
     properties: { label: "Radio", options: ["Option 1", "Option 2"] },
   },
   {
@@ -156,6 +184,8 @@ const initialTasks = [
         )}
       />
     ),
+    design: { icon: <ListIcon />, label: "Multi Select" },
+    position: "basic",
     properties: {
       label: "Multi Select",
       options: ["Option 1", "Option 2", "Option 3"],
@@ -165,6 +195,8 @@ const initialTasks = [
     id: "checkbox",
     type: "Checkbox",
     content: <FormControlLabel control={<Checkbox />} label="Checkbox" />,
+    design: { icon: <CheckBoxIcon />, label: "Checkbox" },
+    position: "basic",
     properties: { label: "Checkbox" },
   },
 ];
@@ -173,6 +205,26 @@ const ItemType = {
   TASK: "TASK",
 };
 
+// const DraggableTask = ({ task, onClick }) => {
+//   const [{ isDragging }, drag] = useDrag({
+//     type: ItemType.TASK,
+//     item: { task },
+//     collect: (monitor) => ({
+//       isDragging: !!monitor.isDragging(),
+//     }),
+//   });
+
+//   return (
+//     <div
+//       ref={drag}
+//       className="draggable"
+//       style={{ opacity: isDragging ? 0.5 : 1, margin: "5px 0" }}
+//       onClick={() => onClick(task)} // Call onClick when clicked
+//     >
+//       {task.content}
+//     </div>
+//   );
+// };
 const DraggableTask = ({ task, onClick }) => {
   const [{ isDragging }, drag] = useDrag({
     type: ItemType.TASK,
@@ -183,14 +235,56 @@ const DraggableTask = ({ task, onClick }) => {
   });
 
   return (
-    <div
-      ref={drag}
-      className="draggable"
-      style={{ opacity: isDragging ? 0.5 : 1, margin: "5px 0" }}
-      onClick={() => onClick(task)} // Call onClick when clicked
-    >
-      {task.content}
-    </div>
+    <>
+      <Grid item xs={6} sm={3}>
+        {" "}
+        {/* 2x2 Grid Layout */}
+        <Box
+          ref={drag}
+          className="draggable"
+          sx={{
+            opacity: isDragging ? 0.5 : 1,
+            margin: "5px 0",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            fontSize: "11px",
+            lineHeight: "21px",
+            boxSizing: "border-box",
+            padding: "8px 5px",
+            width: "135px",
+            minHeight: "105px",
+            backgroundColor: "#fcfcfd",
+            marginBottom: "10px",
+            color: "#2f3439",
+            position: "relative",
+            transition: "background-color 0.3s",
+            "&:hover": {
+              color: "#115293",
+              border: "1px dashed blue", // Change text color on hover
+            },
+          }}
+          onClick={() => onClick(task)} // Call onClick when clicked
+        >
+          {/* Render the icon and label */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {/* Render the icon */}
+            <div style={{ marginBottom: "4px" }}>{task.design.icon}</div>
+            {/* Render the label */}
+            <div>{task.design.label}</div>
+          </div>
+        </Box>
+      </Grid>
+    </>
   );
 };
 
@@ -235,32 +329,54 @@ const DropArea = ({
       }}
     >
       {droppedInputs.map((task, index) => (
-        <div
-          key={index}
-          style={{ margin: "10px 0", width: "25%", position: "relative" }}
-          onClick={() => !isDone && onTaskClick(task)}
-          onMouseEnter={() => handleMouseEnter(index)}
-          onMouseLeave={handleMouseLeave}
-        >
-          {React.cloneElement(task.content, {
-            value: task.value || "", // Display current value
-            onChange: (e) => handleInputChange(task.id, e.target.value), // Capture user input
-          })}
+        <>
+          <div
+            key={index}
+            style={{ margin: "10px 0", width: "25%", position: "relative" }}
+            onClick={() => !isDone && onTaskClick(task)}
+            onMouseEnter={() => handleMouseEnter(index)}
+            onMouseLeave={handleMouseLeave}
+          >
+            {React.cloneElement(task.content, {
+              value: task.value || "",
+              // Display current value
+              onChange: (e) => handleInputChange(task.id, e.target.value), // Capture user input
 
-          {hoveredTask === index && (
-            <IconButton
-              onClick={() => onDeleteTask(task.id)}
-              sx={{
-                position: "absolute",
-                right: 0,
-                top: 0,
-                color: "red",
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          )}
-        </div>
+              // Example of customizing the size
+              style: {
+                width: "300px", // Custom width
+                height: "40px", // Custom height
+              },
+
+              // If task.content is a Material-UI TextField, you can also pass inputProps
+              inputProps: {
+                style: {
+                  padding: "10px", // Custom padding
+                },
+              },
+
+              // If it's a MUI Button or TextField, you can pass size prop
+              size: "small", // small, medium, large (MUI components)
+
+              // You can also apply fullWidth for TextField-like components
+              fullWidth: true, // Example for MUI TextField or similar components
+            })}
+            {hoveredTask === index && (
+              <IconButton
+                onClick={() => onDeleteTask(task.id)}
+                sx={{
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                  color: "red",
+                  marginRight: -14,
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
+          </div>
+        </>
       ))}
       <div
         style={{
@@ -694,16 +810,32 @@ function App() {
         </Toolbar>
       </AppBar>
       <DndProvider backend={HTML5Backend}>
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           <Grid item xs={3}>
             <div className="task-list">
-              {tasks.map((task) => (
-                <DraggableTask
-                  key={task.id}
-                  task={task}
-                  onClick={handleTaskClick}
-                />
-              ))}
+              <Grid
+                container
+                spacing={1}
+                style={{
+                  width: "333px",
+                  height: "105px",
+                }}
+              >
+                {tasks.map((task) => (
+                  <Grid
+                    item
+                    xs={6}
+                    key={task.id}
+                    style={{ backgroundColor: "#f4f6fa", marginTop: 8 }}
+                  >
+                    <DraggableTask
+                      key={task.id}
+                      task={task}
+                      onClick={handleTaskClick}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
             </div>
           </Grid>
           <Grid item xs={6}>
