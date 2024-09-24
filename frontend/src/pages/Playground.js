@@ -706,7 +706,7 @@ function App() {
               ))}
             </div>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={6}>
             <Box sx={{ padding: "10px" }}>
               <DropArea
                 droppedInputs={droppedInputs}
@@ -738,9 +738,38 @@ function App() {
               </Button>
             </Box>
           </Grid>
+          <Grid item xs={3}>
+            <AppBar
+              position="relative"
+              style={{ backgroundColor: "#fcfcfd", color: "#333333" }}
+            >
+              <Toolbar>
+                <Typography variant="h6">Field Properties</Typography>
+              </Toolbar>
+            </AppBar>
+            <Box
+              sx={{
+                padding: 2,
+                width: 300,
+                backgroundColor: "#fcfcfd",
+                color: "#333333",
+                borderLeft: "2px solid #f0f2f6",
+              }}
+            >
+              {renderPropertyFields()}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                sx={{ marginTop: 2 }}
+              >
+                Save
+              </Button>
+            </Box>
+          </Grid>
         </Grid>
 
-        <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
+        {/* <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
           <AppBar position="relative">
             <Toolbar>
               <Typography variant="h6">Edit Task</Typography>
@@ -757,7 +786,7 @@ function App() {
               Save
             </Button>
           </Box>
-        </Drawer>
+        </Drawer> */}
       </DndProvider>
     </>
   );
