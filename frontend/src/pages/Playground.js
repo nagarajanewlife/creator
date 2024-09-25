@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { AppBar, Toolbar, Typography, IconButton, Button } from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
@@ -21,6 +22,11 @@ import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ListIcon from "@mui/icons-material/List";
 import { InputAdornment } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add"; // Custom "+" icon
+import RemoveIcon from "@mui/icons-material/Remove"; // Custom "-" icon
+
+import Divider from "@mui/material/Divider";
+
 import { AccountCircle, Visibility } from "@mui/icons-material";
 import {
   Grid,
@@ -37,7 +43,8 @@ import {
   Radio,
 } from "@mui/material";
 import "../App.css";
-import bg from "./bg/dd.png";
+// import bg from "./bg/dd.png";
+// import initialTasks from "./Task";
 
 // Initial tasks for dragging
 const initialTasks = [
@@ -418,6 +425,7 @@ function App() {
   const [droppedInputs, setDroppedInputs] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [expanded, setExpanded] = useState(true);
 
   const [isDone, setIsDone] = useState(false);
   const [isAccessed, setIsAccessed] = useState(false);
@@ -790,6 +798,10 @@ function App() {
     );
     setDroppedInputs(updatedInputs); // Update state with new input values
   };
+
+  const handleToggle = () => {
+    setExpanded(!expanded);
+  };
   return (
     <>
       <AppBar
@@ -830,33 +842,74 @@ function App() {
         </Toolbar>
       </AppBar>
       <DndProvider backend={HTML5Backend}>
-        <Grid container spacing={1}>
-          <Grid item xs={3}>
-            <div className="task-list">
-              <Grid
-                container
-                spacing={1}
-                style={{
-                  width: "333px",
-                  height: "105px",
+        <Grid container spacing={0}>
+          <Grid item xs={3} style={{ backgroundColor: "white" }}>
+            <Accordion
+              expanded={expanded}
+              onChange={handleToggle}
+              style={{
+                backgroundColor: "#f4f6fa",
+                boxShadow: "none",
+                height: "800px",
+                width: "350px",
+                overflowY: "auto", // Enable vertical scrolling
+                overflowX: "hidden", // Optional: Disable horizontal scrolling
+                "&::-webkit-scrollbar": {
+                  width: "4px", // Scrollbar width
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: "#f0f0f0", // Track color
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#888", // Scrollbar thumb color
+                  borderRadius: "4px", // Optional: Make the scrollbar rounded
+                },
+                "&::-webkit-scrollbar-thumb:hover": {
+                  backgroundColor: "#555", // Scrollbar thumb hover color
+                },
+                // For Firefox:
+                scrollbarColor: "#888 #f0f0f0", // thumb color, track color
+                scrollbarWidth: "thin", // Set
+              }}
+            >
+              <AccordionSummary
+                expandIcon={expanded ? <RemoveIcon /> : <AddIcon />} // Toggle icons
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+                sx={{
+                  "& .MuiAccordionSummary-expandIconWrapper": {
+                    color: "#333", // Custom color for the icon
+                  },
                 }}
               >
-                {tasks.map((task) => (
-                  <Grid
-                    item
-                    xs={6}
-                    key={task.id}
-                    style={{ backgroundColor: "#f4f6fa", marginTop: 8 }}
-                  >
-                    <DraggableTask
+                <Typography>Basic Fields</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Grid
+                  container
+                  spacing={1}
+                  style={{
+                    width: "333px",
+                    height: "105px",
+                  }}
+                >
+                  {tasks.map((task) => (
+                    <Grid
+                      item
+                      xs={6}
                       key={task.id}
-                      task={task}
-                      onClick={handleTaskClick}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </div>
+                      style={{ backgroundColor: "#f4f6fa", marginTop: 8 }}
+                    >
+                      <DraggableTask
+                        key={task.id}
+                        task={task}
+                        onClick={handleTaskClick}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
           </Grid>
           <Grid item xs={6}>
             <Box sx={{ padding: "10px" }}>
@@ -869,56 +922,69 @@ function App() {
                 isDone={isDone}
               />
               {/* "Submit" button */}
-              <Button
-                variant="contained"
-                color="success"
-                onClick={handleSubmit}
-                sx={{ marginRight: 1 }}
-                disabled={!isSubmitEnabled} // Enable only when "Access the application" is clicked
-              >
-                Submit
-              </Button>
+              {droppedInputs.length === 0 ? null : (
+                <div>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleSubmit}
+                    sx={{ marginRight: 1 }}
+                    disabled={!isSubmitEnabled} // Enable only when "Access the application" is clicked
+                  >
+                    Submit
+                  </Button>
 
-              {/* "Reset" button */}
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleReset}
-                disabled={!isSubmitEnabled} // Enable only when "Access the application" is clicked
-              >
-                Reset
-              </Button>
+                  {/* "Reset" button */}
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleReset}
+                    disabled={!isSubmitEnabled} // Enable only when "Access the application" is clicked
+                  >
+                    Reset
+                  </Button>
+                </div>
+              )}
             </Box>
           </Grid>
-          <Grid item xs={3}>
-            <AppBar
-              position="relative"
-              style={{ backgroundColor: "#fcfcfd", color: "#333333" }}
-            >
-              <Toolbar>
-                <Typography variant="h6">Field Properties</Typography>
-              </Toolbar>
-            </AppBar>
-            <Box
-              sx={{
-                padding: 2,
-                width: 300,
-                backgroundColor: "#fcfcfd",
-                color: "#333333",
-                borderLeft: "2px solid #f0f2f6",
-              }}
-            >
-              {renderPropertyFields()}
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-                sx={{ marginTop: 2 }}
+          {droppedInputs.length === 0 ? null : (
+            <Grid item xs={3}>
+              <AppBar
+                position="relative"
+                style={{
+                  backgroundColor: "#fcfcfd",
+                  color: "#333333",
+                  boxShadow: "none",
+                  borderLeft: "2px solid #f0f2f6", // Add right border
+                  borderBottom: "2px solid #f0f2f6", // Add bottom border
+                }}
               >
-                Save
-              </Button>
-            </Box>
-          </Grid>
+                <Toolbar>
+                  <Typography variant="h6">Field Properties</Typography>
+                </Toolbar>
+              </AppBar>
+              <Box
+                sx={{
+                  padding: 2,
+                  width: 300,
+                  backgroundColor: "#fcfcfd",
+                  color: "#333333",
+                  borderLeft: "2px solid #f0f2f6",
+                }}
+              >
+                {renderPropertyFields()}
+                {/* <Divider /> */}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSave}
+                  sx={{ marginTop: 2 }}
+                >
+                  Save
+                </Button>
+              </Box>
+            </Grid>
+          )}
         </Grid>
 
         {/* <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
