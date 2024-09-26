@@ -356,8 +356,8 @@ const DropArea = ({
               p: "2px 4px",
               display: "flex",
               alignItems: "center",
-              width: 660,
-              border: "1px dashed #3987d9",
+              width: isDone ? 300 : 660,
+              border: !isDone ? "1px dashed #3987d9" : null,
               marginTop: "12px",
               cursor: "pointer",
               backgroundColor: activeTaskId === task.id ? "#e0f7fa" : "white", // Highlight if active
@@ -408,25 +408,27 @@ const DropArea = ({
                 disabled={!isDone} // Disable if not allowed
               />
             )}
+            {isDone ? null : (
+              <>
+                <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
 
-            {/* Divider before DeleteIcon */}
-            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-            {/* Delete Icon at the end */}
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => onDeleteTask(task.id)}
-                sx={{
-                  color: "default",
-                  "&:hover": {
-                    color: "red",
-                  },
-                }}
-                disabled={task.disabled || false} // Disable if task is disabled
-              >
-                <DeleteIcon />{" "}
-                {/* Replace with your DirectionsIcon if needed */}
-              </IconButton>
-            </InputAdornment>
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => onDeleteTask(task.id)}
+                    sx={{
+                      color: "default",
+                      "&:hover": {
+                        color: "red",
+                      },
+                    }}
+                    disabled={task.disabled || false} // Disable if task is disabled
+                  >
+                    <DeleteIcon />{" "}
+                    {/* Replace with your DirectionsIcon if needed */}
+                  </IconButton>
+                </InputAdornment>
+              </>
+            )}
           </Paper>
 
           {/* Show additional properties when task is active */}
