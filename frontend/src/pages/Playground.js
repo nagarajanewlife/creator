@@ -24,8 +24,13 @@ import ListIcon from "@mui/icons-material/List";
 import { InputAdornment } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add"; // Custom "+" icon
 import RemoveIcon from "@mui/icons-material/Remove"; // Custom "-" icon
-
+import Paper from "@mui/material/Paper";
+import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
+
+import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
+import DirectionsIcon from "@mui/icons-material/Directions";
 
 import { AccountCircle, Visibility } from "@mui/icons-material";
 import {
@@ -52,7 +57,7 @@ const initialTasks = [
     id: "email",
     type: "Email",
     content: <TextField type="email" label="Email" variant="outlined" />,
-    design: { icon: <EmailIcon sx={{ fontSize: 35 }} />, label: "Email" },
+    design: { icon: <EmailIcon />, label: "Email" },
     position: "basic",
     properties: {
       label: "Email",
@@ -262,7 +267,8 @@ const DraggableTask = ({ task, onClick }) => {
             fontSize: "11px",
             lineHeight: "21px",
             boxSizing: "border-box",
-            padding: "8px 5px",
+            // padding: "8px 5px",
+            border: "none",
             width: "135px",
             minHeight: "105px",
             backgroundColor: "#fcfcfd",
@@ -306,7 +312,11 @@ const DropArea = ({
   isDone,
 }) => {
   const [hoveredTask, setHoveredTask] = useState(null); // Track hovered task
+  const [activeTaskId, setActiveTaskId] = useState(null); // Track active task
 
+  const handleTaskClick = (task) => {
+    setActiveTaskId(task.id); // Set the clicked task as active
+  };
   const handleMouseEnter = (taskId) => {
     setHoveredTask(taskId); // Set the task ID when mouse enters
   };
@@ -339,71 +349,90 @@ const DropArea = ({
     >
       {droppedInputs.map((task, index) => (
         <>
-          <div
+          <Paper
             key={index}
-            style={{ margin: "10px 0", width: "25%", position: "relative" }}
-            onClick={() => !isDone && onTaskClick(task)}
+            component="form"
+            sx={{
+              p: "2px 4px",
+              display: "flex",
+              alignItems: "center",
+              width: 660,
+              border: "1px dashed #3987d9",
+              marginTop: "12px",
+              cursor: "pointer",
+              backgroundColor: activeTaskId === task.id ? "#e0f7fa" : "white", // Highlight if active
+            }}
+            onClick={() => {
+              // Set the active task and call onTaskClick only if not done
+              if (!isDone) {
+                onTaskClick(task);
+              }
+              setActiveTaskId(task.id); // Set active task
+            }}
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={handleMouseLeave}
           >
-            {React.cloneElement(task.content, {
-              value: task.value || "",
-              // Display current value
-              onChange: (e) => handleInputChange(task.id, e.target.value), // Capture user input
+            {/* Left side IconButton (Menu Icon) */}
+            <IconButton sx={{ p: "4px" }} aria-label="menu" size="small">
+              {task.design.icon}
+            </IconButton>
+            {/* InputBase as task input */}
+            {!isDone ? (
+              <Box
+                sx={{ ml: 1, flex: 1, cursor: "pointer" }}
+                placeholder={task.properties.label}
+                inputProps={{ "aria-label": "search google maps" }}
+                value={task.value || ""}
+                onChange={(e) => {
+                  if (!isDone) {
+                    onTaskClick(task);
+                  }
+                  handleInputChange(task.id, e.target.value);
+                }}
+                disabled={!isDone} // Disable if not allowed
+              >
+                {task.properties.label}
+              </Box>
+            ) : (
+              <InputBase
+                sx={{ ml: 1, flex: 1, cursor: "pointer" }}
+                placeholder={task.properties.label}
+                inputProps={{ "aria-label": "search google maps" }}
+                value={task.value || ""}
+                onChange={(e) => {
+                  if (!isDone) {
+                    onTaskClick(task);
+                  }
+                  handleInputChange(task.id, e.target.value);
+                }}
+                disabled={!isDone} // Disable if not allowed
+              />
+            )}
 
-              // Example of customizing the size
-              style: {
-                width: "750px", // Custom width
-                height: "99%",
-                border: "1px dashed #3987d9", // Custom height
-              },
-
-              // If task.content is a Material-UI TextField, you can also pass inputProps
-
-              InputProps: {
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    sx={{ display: "flex", alignItems: "center" }}
-                  >
-                    <IconButton
-                      onClick={() => onDeleteTask(task.id)}
-                      sx={{
-                        color: "default", // Default color (inherit or any other default color)
-                        marginLeft: "157%",
-                        "&:hover": {
-                          color: "red", // Color on hover
-                        },
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-              // If it's a MUI Button or TextField, you can pass size prop
-              size: "small", // small, medium, large (MUI components)
-
-              // You can also apply fullWidth for TextField-like components
-              fullWidth: true, // Example for MUI TextField or similar components
-            })}
-            {/* {hoveredTask === index && (
+            {/* Divider before DeleteIcon */}
+            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+            {/* Delete Icon at the end */}
+            <InputAdornment position="end">
               <IconButton
                 onClick={() => onDeleteTask(task.id)}
                 sx={{
-                  position: "absolute",
-                  right: 0,
-                  top: 0,
-                  color: "red",
-                  marginRight: -67,
+                  color: "default",
+                  "&:hover": {
+                    color: "red",
+                  },
                 }}
+                disabled={task.disabled || false} // Disable if task is disabled
               >
-                <DeleteIcon />
+                <DeleteIcon />{" "}
+                {/* Replace with your DirectionsIcon if needed */}
               </IconButton>
-            )} */}
-          </div>
+            </InputAdornment>
+          </Paper>
+
+          {/* Show additional properties when task is active */}
         </>
       ))}
+
       <div
         style={{
           display: "flex",
@@ -851,7 +880,7 @@ function App() {
                 backgroundColor: "#f4f6fa",
                 boxShadow: "none",
                 height: "800px",
-                width: "350px",
+                width: "330px",
                 overflowY: "auto", // Enable vertical scrolling
                 overflowX: "hidden", // Optional: Disable horizontal scrolling
                 "&::-webkit-scrollbar": {
@@ -986,25 +1015,6 @@ function App() {
             </Grid>
           )}
         </Grid>
-
-        {/* <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
-          <AppBar position="relative">
-            <Toolbar>
-              <Typography variant="h6">Edit Task</Typography>
-            </Toolbar>
-          </AppBar>
-          <Box sx={{ padding: 2, width: 300 }}>
-            {renderPropertyFields()}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              sx={{ marginTop: 2 }}
-            >
-              Save
-            </Button>
-          </Box>
-        </Drawer> */}
       </DndProvider>
     </>
   );
