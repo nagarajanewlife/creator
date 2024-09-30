@@ -1,5 +1,10 @@
 // Import the models correctly
-import { Wohozouser, Wohozodash } from "../models/wohozo.models.js";
+import {
+  Wohozouser,
+  Wohozodash,
+  EmployeeTable,
+  TimesheetTable,
+} from "../models/wohozo.models.js";
 
 // Create a new user
 export const UserCreate = async (req, res) => {
@@ -49,6 +54,60 @@ export const DashboardAppsDetails = async (req, res) => {
     res.status(200).json(dashboards);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const EmployeeCreate = async (req, res) => {
+  const newEmpAdd = new EmployeeTable({
+    employeeId: req.body.employeeId,
+    name: req.body.name,
+    hourlyRate: req.body.hourlyRate,
+  });
+
+  try {
+    const Adduseremp = await newEmpAdd.save();
+    return res.status(201).json(Adduseremp);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+export const Employeeget = async (req, res) => {
+  try {
+    const employees = await EmployeeTable.find().sort({ name: 1 });
+    res.json(employees);
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// TimesheetsAdd
+
+export const TimesheetCreate = async (req, res) => {
+  const newtimesheetAdd = new TimesheetTable({
+    employee: req.body.employee,
+    hoursWorked: req.body.hoursWorked,
+    description: req.body.description,
+  });
+
+  try {
+    const AdduserTimesheet = await newtimesheetAdd.save();
+    return res.status(201).json(AdduserTimesheet);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+// Timesheetsget get
+
+export const Timesheetsget = async (req, res) => {
+  try {
+    const Timesheetsgetinfo = await TimesheetTable.find().sort({ date: -1 });
+    res.json(Timesheetsgetinfo);
+  } catch (error) {
+    console.error("Error fetching Timesheetsgetinfo:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

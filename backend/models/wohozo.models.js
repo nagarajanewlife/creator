@@ -35,9 +35,52 @@ const dashSchema = new Schema(
   }
 );
 
+// employes table
+
+const EmployeeSchema = new Schema({
+  employeeId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  hourlyRate: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  // Additional fields can be added as needed
+});
+
+// TimesheetTable
+const TimesheetSchema = new Schema({
+  employee: {
+    type: Schema.Types.ObjectId,
+    ref: "Employee",
+    required: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  hoursWorked: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  description: {
+    type: String,
+  },
+});
+
 // Create models
 const Wohozouser = model("Wohozouser", userSchema);
 const Wohozodash = model("Wohozodash", dashSchema);
+const EmployeeTable = model("Employee", EmployeeSchema);
+const TimesheetTable = model("Timesheet", TimesheetSchema);
 
 // Export both models
-export { Wohozouser, Wohozodash };
+export { Wohozouser, Wohozodash, EmployeeTable, TimesheetTable };

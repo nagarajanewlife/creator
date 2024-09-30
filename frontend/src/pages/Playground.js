@@ -64,6 +64,7 @@ const initialTasks = [
       placeholder: "Enter your email",
       name: "",
       id: "",
+      mandatory: true, // Mandatory flag
     },
   },
   {
@@ -77,6 +78,7 @@ const initialTasks = [
       placeholder: "Enter your address",
       name: "",
       id: "",
+      mandatory: false, // Mandatory flag
     },
   },
   {
@@ -90,6 +92,7 @@ const initialTasks = [
       placeholder: "Enter your phone",
       name: "",
       id: "",
+      mandatory: false, // Mandatory flag
     },
   },
   {
@@ -103,6 +106,7 @@ const initialTasks = [
       placeholder: "Enter text",
       name: "",
       id: "",
+      mandatory: false, // Mandatory flag
     },
   },
   {
@@ -118,6 +122,7 @@ const initialTasks = [
       placeholder: "Enter multiple lines",
       name: "",
       id: "",
+      mandatory: false, // Mandatory flag
     },
   },
   {
@@ -131,6 +136,7 @@ const initialTasks = [
       placeholder: "Enter a number",
       name: "",
       id: "",
+      mandatory: false, // Mandatory flag
     },
   },
   {
@@ -146,7 +152,13 @@ const initialTasks = [
     ),
     design: { icon: <DateRangeIcon />, label: "Date" },
     position: "basic",
-    properties: { label: "Date", placeholder: "", name: "", id: "" },
+    properties: {
+      label: "Date",
+      placeholder: "",
+      name: "",
+      id: "",
+      mandatory: false, // Mandatory flag
+    },
   },
   {
     id: "time",
@@ -161,7 +173,13 @@ const initialTasks = [
     ),
     design: { icon: <AccessTimeIcon />, label: "Time" },
     position: "basic",
-    properties: { label: "Time", placeholder: "", name: "", id: "" },
+    properties: {
+      label: "Time",
+      placeholder: "",
+      name: "",
+      id: "",
+      mandatory: false, // Mandatory flag
+    },
   },
   {
     id: "radio",
@@ -184,7 +202,11 @@ const initialTasks = [
     ),
     design: { icon: <RadioButtonCheckedIcon />, label: "Radio" },
     position: "basic",
-    properties: { label: "Radio", options: ["Option 1", "Option 2"] },
+    properties: {
+      label: "Radio",
+      options: ["Option 1", "Option 2"],
+      mandatory: false, // Mandatory flag
+    },
   },
   {
     id: "multiSelect",
@@ -203,6 +225,7 @@ const initialTasks = [
     properties: {
       label: "Multi Select",
       options: ["Option 1", "Option 2", "Option 3"],
+      mandatory: false, // Mandatory flag
     },
   },
   {
@@ -211,7 +234,10 @@ const initialTasks = [
     content: <FormControlLabel control={<Checkbox />} label="Checkbox" />,
     design: { icon: <CheckBoxIcon />, label: "Checkbox" },
     position: "basic",
-    properties: { label: "Checkbox" },
+    properties: {
+      label: "Checkbox",
+      mandatory: false, // Mandatory flag
+    },
   },
 ];
 
@@ -377,6 +403,7 @@ const DropArea = ({
               {task.design.icon}
             </IconButton>
             {/* InputBase as task input */}
+
             {!isDone ? (
               <Box
                 sx={{ ml: 1, flex: 1, cursor: "pointer" }}
@@ -390,23 +417,23 @@ const DropArea = ({
                   handleInputChange(task.id, e.target.value);
                 }}
                 disabled={!isDone} // Disable if not allowed
-              >
-                {task.properties.label}
-              </Box>
+              ></Box>
             ) : (
-              <InputBase
-                sx={{ ml: 1, flex: 1, cursor: "pointer" }}
-                placeholder={task.properties.label}
-                inputProps={{ "aria-label": "search google maps" }}
-                value={task.value || ""}
-                onChange={(e) => {
-                  if (!isDone) {
-                    onTaskClick(task);
-                  }
-                  handleInputChange(task.id, e.target.value);
-                }}
-                disabled={!isDone} // Disable if not allowed
-              />
+              <>
+                <InputBase
+                  sx={{ ml: 1, flex: 1, cursor: "pointer" }}
+                  placeholder={task.properties.label}
+                  inputProps={{ "aria-label": "search google maps" }}
+                  value={task.value || ""}
+                  onChange={(e) => {
+                    if (!isDone) {
+                      onTaskClick(task);
+                    }
+                    handleInputChange(task.id, e.target.value);
+                  }}
+                  disabled={!isDone} // Disable if not allowed
+                />
+              </>
             )}
             {isDone ? null : (
               <>
@@ -681,6 +708,27 @@ function App() {
 
     const { type, properties } = selectedTask;
 
+    const handlePropertyChange = (e) => {
+      const { name, value } = e.target;
+      setSelectedTask((prevTask) => ({
+        ...prevTask,
+        properties: {
+          ...prevTask.properties,
+          [name]: value,
+        },
+      }));
+    };
+
+    const handleMandatoryChange = (e) => {
+      setSelectedTask((prevTask) => ({
+        ...prevTask,
+        properties: {
+          ...prevTask.properties,
+          mandatory: e.target.checked,
+        },
+      }));
+    };
+
     switch (type) {
       case "Email":
       case "Address":
@@ -721,6 +769,16 @@ function App() {
               fullWidth
               sx={{ marginTop: 2 }}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={properties.mandatory}
+                  onChange={handleMandatoryChange}
+                />
+              }
+              label="Mandatory"
+              sx={{ marginTop: 2 }}
+            />
           </>
         );
       case "Date":
@@ -750,6 +808,16 @@ function App() {
               fullWidth
               sx={{ marginTop: 2 }}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={properties.mandatory}
+                  onChange={handleMandatoryChange}
+                />
+              }
+              label="Mandatory"
+              sx={{ marginTop: 2 }}
+            />
           </>
         );
       case "Radio":
@@ -775,6 +843,16 @@ function App() {
                 })
               }
               fullWidth
+              sx={{ marginTop: 2 }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={properties.mandatory}
+                  onChange={handleMandatoryChange}
+                />
+              }
+              label="Mandatory"
               sx={{ marginTop: 2 }}
             />
           </>
@@ -804,6 +882,16 @@ function App() {
               fullWidth
               sx={{ marginTop: 2 }}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={properties.mandatory}
+                  onChange={handleMandatoryChange}
+                />
+              }
+              label="Mandatory"
+              sx={{ marginTop: 2 }}
+            />
           </>
         );
       case "Checkbox":
@@ -816,12 +904,23 @@ function App() {
               onChange={handlePropertyChange}
               fullWidth
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={properties.mandatory}
+                  onChange={handleMandatoryChange}
+                />
+              }
+              label="Mandatory"
+              sx={{ marginTop: 2 }}
+            />
           </>
         );
       default:
         return null;
     }
   };
+
   const handleUpdateInput = (id, value) => {
     // Update the droppedInputs array when input values change
     const updatedInputs = droppedInputs.map((input) =>
