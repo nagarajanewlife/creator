@@ -11,7 +11,9 @@ import Dashboard from "./pages/Dashbord";
 import Login from "./pages/AuthPage";
 import Publish from "./pages/Publish";
 import Edit from "./pages/Edit";
-
+import Timesheet from "./components/AdminDashboard/Dashboard";
+import Earnings from "./components/Earnings/MonthlyEarnings";
+import Unauthorized from "./pages/UnauthorizedPage";
 // test commit
 function App() {
   const [user, setUser] = useState(null);
@@ -38,6 +40,10 @@ function App() {
           element={user ? <Navigate to="/dashboard" /> : <Login />}
         />
         <Route
+          path="/login"
+          element={user ? <Navigate to="/dashboard" /> : <Login />}
+        />
+        <Route
           path="/dashboard"
           element={user ? <Dashboard /> : <Navigate to="/" />}
         />
@@ -46,10 +52,24 @@ function App() {
           element={user ? <Playground /> : <Navigate to="/" />}
         />
         <Route
+          path="/adminDashboard"
+          element={user ? <Timesheet /> : <Navigate to="/" />}
+        />
+        <Route
           path="/publish"
           element={user ? <Publish /> : <Navigate to="/" />}
         />
+        <Route
+          path="/earnings"
+          element={user ? <Earnings /> : <Navigate to="/" />}
+        />
+        {/* earnings */}
         <Route path="/edit" element={user ? <Edit /> : <Navigate to="/" />} />
+        <Route
+          path="/unauthorized"
+          element={user ? <Unauthorized /> : <Navigate to="/" />}
+        />
+        {/* unauthorized */}
       </Routes>
     </Router>
   );
