@@ -125,10 +125,10 @@ const MonthlyEarnings = () => {
                   <strong>Total Hours</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Hourly Rate ($)</strong>
+                  <strong>Hourly Rate (Rs)</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Total Earnings ($)</strong>
+                  <strong>Total Earnings (Rs)</strong>
                 </TableCell>
               </TableRow>
             </TableHead>

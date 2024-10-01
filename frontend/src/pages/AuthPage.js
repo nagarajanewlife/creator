@@ -75,6 +75,7 @@ function AuthPage() {
             .post("http://localhost:6969/addUser", {
               uid: user.uid,
               email: user.email,
+              role: "user",
             })
             .then(() => {
               setMessage("User registered successfully.");
@@ -124,6 +125,7 @@ function AuthPage() {
             email: user.email,
             displayName: user.displayName,
             photoURL: user.photoURL,
+            role: "user",
           })
           .then(() => {
             alert("User added successfully");

@@ -13,6 +13,7 @@ export const UserCreate = async (req, res) => {
     displayName: req.body.displayName,
     email: req.body.email,
     photoURL: req.body.photoURL,
+    role: req.body.role,
   });
 
   try {
@@ -20,6 +21,17 @@ export const UserCreate = async (req, res) => {
     return res.status(201).json(Adduser);
   } catch (error) {
     return res.status(400).json({ message: error.message });
+  }
+};
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await Wohozouser.findOne({ uid: req.params.uid });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -108,6 +120,78 @@ export const Timesheetsget = async (req, res) => {
     res.json(Timesheetsgetinfo);
   } catch (error) {
     console.error("Error fetching Timesheetsgetinfo:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+export const Earings = async (req, res) => {
+  const { year, month } = req.params;
+
+  // Validate year and month
+  const yearNum = parseInt(year, 10);
+  const monthNum = parseInt(month, 10);
+
+  if (
+    isNaN(yearNum) ||
+    isNaN(monthNum) ||
+    yearNum < 1900 ||
+    yearNum > 2100 ||
+    monthNum < 1 ||
+    monthNum > 12
+  ) {
+    return res.status(400).json({ message: "Invalid year or month." });
+  }
+
+  // Calculate start and end dates for the month
+  const startDate = new Date(yearNum, monthNum - 1, 1);
+  const endDate = new Date(yearNum, monthNum, 1);
+
+  try {
+    // Aggregate timesheets
+    const earnings = await TimesheetTable.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: startDate,
+            $lt: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$employee",
+          totalHours: { $sum: "$hoursWorked" },
+        },
+      },
+      {
+        $lookup: {
+          from: "employees", // MongoDB collection name is lowercase and plural
+          localField: "_id",
+          foreignField: "_id",
+          as: "employee",
+        },
+      },
+      {
+        $unwind: "$employee",
+      },
+      {
+        $project: {
+          _id: 0,
+          employeeId: "$employee.employeeId",
+          name: "$employee.name",
+          hourlyRate: "$employee.hourlyRate",
+          totalHours: 1,
+          totalEarnings: { $multiply: ["$totalHours", "$employee.hourlyRate"] },
+        },
+      },
+    ]);
+
+    res.json({
+      year: yearNum,
+      month: monthNum,
+      earnings,
+    });
+  } catch (error) {
+    console.error("Error calculating earnings:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

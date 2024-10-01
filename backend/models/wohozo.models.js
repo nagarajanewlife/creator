@@ -16,6 +16,9 @@ const userSchema = new Schema({
   photoURL: {
     type: String,
   },
+  role: {
+    type: String,
+  },
 });
 
 // Dashboard schema definition

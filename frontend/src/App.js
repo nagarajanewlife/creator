@@ -13,6 +13,7 @@ import Publish from "./pages/Publish";
 import Edit from "./pages/Edit";
 import Timesheet from "./components/AdminDashboard/Dashboard";
 import Earnings from "./components/Earnings/MonthlyEarnings";
+import Unauthorized from "./pages/UnauthorizedPage";
 // test commit
 function App() {
   const [user, setUser] = useState(null);
@@ -64,6 +65,11 @@ function App() {
         />
         {/* earnings */}
         <Route path="/edit" element={user ? <Edit /> : <Navigate to="/" />} />
+        <Route
+          path="/unauthorized"
+          element={user ? <Unauthorized /> : <Navigate to="/" />}
+        />
+        {/* unauthorized */}
       </Routes>
     </Router>
   );
