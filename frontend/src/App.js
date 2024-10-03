@@ -37,16 +37,29 @@ function App() {
         {/* If the user is logged in, navigate to dashboard. Otherwise, show login */}
         <Route
           path="/"
-          element={user ? <Navigate to="/dashboard" /> : <Login />}
+          element={
+            user ? (
+              <Navigate to={`/userhome/${user?.displayName}/admindashboard`} />
+            ) : (
+              <Login />
+            )
+          }
         />
         <Route
           path="/login"
-          element={user ? <Navigate to="/dashboard" /> : <Login />}
+          element={
+            user ? (
+              <Navigate to={`/userhome/${user?.displayName}/admindashboard`} />
+            ) : (
+              <Login />
+            )
+          }
         />
         <Route
-          path="/dashboard"
+          path={`/userhome/${user?.displayName}/admindashboard`} // Remove the backticks and use curly braces for dynamic values
           element={user ? <Dashboard /> : <Navigate to="/" />}
         />
+
         <Route
           path="/playground"
           element={user ? <Playground /> : <Navigate to="/" />}

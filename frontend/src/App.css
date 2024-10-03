@@ -23,3 +23,14 @@
   width: 92% !important;
   height: 50px !important;
 }
+.css-900a6e-MuiListItemIcon-root{
+  min-width: 33px !important
+}
+.css-1ifkoh7-MuiListItemIcon-root{
+  min-width: 33px !important
+}
+.css-17mj2y8-MuiDrawer-docked .MuiDrawer-paper{
+  margin-top:"64px"!important;
+  background-color: "#f7f8fc" !important;
+
+}
