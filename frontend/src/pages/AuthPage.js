@@ -98,7 +98,7 @@ function AuthPage() {
 
           // Check if the email is verified
           if (user.emailVerified) {
-            navigate("/dashboard");
+            navigate(`/userhome/${user.displayName}/admindashboard`);
           } else {
             setError(
               "Your email is not verified. Please check your inbox for the verification link."
@@ -129,7 +129,7 @@ function AuthPage() {
           })
           .then(() => {
             alert("User added successfully");
-            navigate("/dashboard");
+            navigate(`/userhome/${user.displayName}/admindashboard`);
           })
           .catch((error) => {
             console.error("Error sending data:", error);

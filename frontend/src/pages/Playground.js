@@ -1,39 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import { AppBar, Toolbar, Typography, IconButton, Button } from "@mui/material";
-import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import ElectricBoltOutlinedIcon from "@mui/icons-material/ElectricBoltOutlined";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import EmailIcon from "@mui/icons-material/Email";
-import HomeIcon from "@mui/icons-material/Home";
-import PhoneIcon from "@mui/icons-material/Phone";
-import TextFieldsIcon from "@mui/icons-material/TextFields";
-import NumbersIcon from "@mui/icons-material/Numbers";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import ListIcon from "@mui/icons-material/List";
-import { InputAdornment } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add"; // Custom "+" icon
-import RemoveIcon from "@mui/icons-material/Remove"; // Custom "-" icon
-import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
-import Divider from "@mui/material/Divider";
 
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import DirectionsIcon from "@mui/icons-material/Directions";
-
-import { AccountCircle, Visibility } from "@mui/icons-material";
 import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Grid,
   Box,
   TextField,
@@ -46,184 +24,162 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  InputAdornment,
+  Divider,
+  Paper,
 } from "@mui/material";
+import {
+  Settings as SettingsIcon,
+  MoreVert as MoreVertIcon,
+  DeleteOutlined as DeleteIcon,
+  ElectricBoltOutlined as ElectricBoltOutlinedIcon,
+  EditOutlined as EditOutlinedIcon,
+  HelpOutline as HelpOutlineIcon,
+  Email as EmailIcon,
+  Home as HomeIcon,
+  Phone as PhoneIcon,
+  TextFields as TextFieldsIcon,
+  Numbers as NumbersIcon,
+  DateRange as DateRangeIcon,
+  AccessTime as AccessTimeIcon,
+  RadioButtonChecked as RadioButtonCheckedIcon,
+  CheckBox as CheckBoxIcon,
+  List as ListIcon,
+  Add as AddIcon,
+  Remove as RemoveIcon,
+} from "@mui/icons-material";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import "../App.css";
-// import bg from "./bg/dd.png";
-// import initialTasks from "./Task";
 
 // Initial tasks for dragging
 const initialTasks = [
   {
     id: "email",
     type: "Email",
-    content: <TextField type="email" label="Email" variant="outlined" />,
     design: { icon: <EmailIcon />, label: "Email" },
     position: "basic",
     properties: {
       label: "Email",
       placeholder: "Enter your email",
-      name: "",
-      id: "",
+      name: "Email_name",
+      id: "Email_id",
       mandatory: true, // Mandatory flag
     },
   },
   {
     id: "address",
     type: "Address",
-    content: <TextField label="Address" variant="outlined" />,
     design: { icon: <HomeIcon />, label: "Address" },
     position: "Special",
     properties: {
       label: "Address",
       placeholder: "Enter your address",
-      name: "",
-      id: "",
+      name: "Address_name",
+      id: "Address_id",
       mandatory: false, // Mandatory flag
     },
   },
   {
     id: "phone",
     type: "Phone",
-    content: <TextField type="tel" label="Phone" variant="outlined" />,
     design: { icon: <PhoneIcon />, label: "Phone" },
     position: "Advanced",
     properties: {
       label: "Phone",
       placeholder: "Enter your phone",
-      name: "",
-      id: "",
+      name: "Phone_name",
+      id: "Phone_id",
       mandatory: false, // Mandatory flag
     },
   },
   {
     id: "singleLine",
     type: "Single Line",
-    content: <TextField label="Single Line" variant="outlined" />,
     design: { icon: <TextFieldsIcon />, label: "Single Line" },
     position: "Advanced",
     properties: {
       label: "Single Line",
       placeholder: "Enter text",
-      name: "",
-      id: "",
+      name: "Single_Line_name",
+      id: "Single_Line_id",
       mandatory: false, // Mandatory flag
     },
   },
   {
     id: "multiLine",
     type: "Multi Line",
-    content: (
-      <TextField label="Multi Line" variant="outlined" multiline rows={4} />
-    ),
     design: { icon: <TextFieldsIcon />, label: "Multi Line" },
     position: "Advanced",
     properties: {
       label: "Multi Line",
       placeholder: "Enter multiple lines",
-      name: "",
-      id: "",
+      name: "multiLine_name",
+      id: "multiLine_id",
       mandatory: false, // Mandatory flag
     },
   },
   {
     id: "number",
     type: "Number",
-    content: <TextField type="number" label="Number" variant="outlined" />,
     design: { icon: <NumbersIcon />, label: "Number" },
     position: "basic",
     properties: {
       label: "Number",
       placeholder: "Enter a number",
-      name: "",
-      id: "",
+      name: "Number_name",
+      id: "Number_id",
       mandatory: false, // Mandatory flag
     },
   },
   {
     id: "date",
     type: "Date",
-    content: (
-      <TextField
-        type="date"
-        label="Date"
-        InputLabelProps={{ shrink: true }}
-        variant="outlined"
-      />
-    ),
     design: { icon: <DateRangeIcon />, label: "Date" },
     position: "basic",
     properties: {
       label: "Date",
       placeholder: "",
-      name: "",
-      id: "",
+      name: "date_name",
+      id: "date_id",
       mandatory: false, // Mandatory flag
     },
   },
   {
     id: "time",
     type: "Time",
-    content: (
-      <TextField
-        type="time"
-        label="Time"
-        InputLabelProps={{ shrink: true }}
-        variant="outlined"
-      />
-    ),
     design: { icon: <AccessTimeIcon />, label: "Time" },
     position: "basic",
     properties: {
       label: "Time",
       placeholder: "",
-      name: "",
-      id: "",
+      name: "time_name",
+      id: "time_id",
       mandatory: false, // Mandatory flag
     },
   },
   {
     id: "radio",
     type: "Radio",
-    content: (
-      <FormControl>
-        <RadioGroup>
-          <FormControlLabel
-            value="option1"
-            control={<Radio />}
-            label="Option 1"
-          />
-          <FormControlLabel
-            value="option2"
-            control={<Radio />}
-            label="Option 2"
-          />
-        </RadioGroup>
-      </FormControl>
-    ),
     design: { icon: <RadioButtonCheckedIcon />, label: "Radio" },
     position: "basic",
     properties: {
       label: "Radio",
       options: ["Option 1", "Option 2"],
+      name: "radio_name",
+      id: "radio_id",
       mandatory: false, // Mandatory flag
     },
   },
   {
     id: "multiSelect",
     type: "Multi Select",
-    content: (
-      <Autocomplete
-        multiple
-        options={["Option 1", "Option 2", "Option 3"]}
-        renderInput={(params) => (
-          <TextField {...params} label="Select options" />
-        )}
-      />
-    ),
     design: { icon: <ListIcon />, label: "Multi Select" },
     position: "basic",
     properties: {
       label: "Multi Select",
+      name: "multiselect_name",
+      id: "multiselect_id",
       options: ["Option 1", "Option 2", "Option 3"],
       mandatory: false, // Mandatory flag
     },
@@ -231,40 +187,23 @@ const initialTasks = [
   {
     id: "checkbox",
     type: "Checkbox",
-    content: <FormControlLabel control={<Checkbox />} label="Checkbox" />,
     design: { icon: <CheckBoxIcon />, label: "Checkbox" },
     position: "basic",
     properties: {
       label: "Checkbox",
+      name: "checkbox_name",
+      id: "checkbox_id",
       mandatory: false, // Mandatory flag
     },
   },
 ];
 
+// Define the item type for React DnD
 const ItemType = {
   TASK: "TASK",
 };
 
-// const DraggableTask = ({ task, onClick }) => {
-//   const [{ isDragging }, drag] = useDrag({
-//     type: ItemType.TASK,
-//     item: { task },
-//     collect: (monitor) => ({
-//       isDragging: !!monitor.isDragging(),
-//     }),
-//   });
-
-//   return (
-//     <div
-//       ref={drag}
-//       className="draggable"
-//       style={{ opacity: isDragging ? 0.5 : 1, margin: "5px 0" }}
-//       onClick={() => onClick(task)} // Call onClick when clicked
-//     >
-//       {task.content}
-//     </div>
-//   );
-// };
+// DraggableTask Component
 const DraggableTask = ({ task, onClick }) => {
   const [{ isDragging }, drag] = useDrag({
     type: ItemType.TASK,
@@ -275,60 +214,56 @@ const DraggableTask = ({ task, onClick }) => {
   });
 
   return (
-    <>
-      <Grid item xs={6} sm={3}>
-        {" "}
-        {/* 2x2 Grid Layout */}
-        <Box
-          ref={drag}
-          className="draggable"
-          sx={{
-            opacity: isDragging ? 0.5 : 1,
-            margin: "5px 0",
+    <Grid item xs={6} sm={3}>
+      <Box
+        ref={drag}
+        className="draggable"
+        sx={{
+          opacity: isDragging ? 0.5 : 1,
+          margin: "5px 0",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          fontSize: "11px",
+          lineHeight: "21px",
+          boxSizing: "border-box",
+          border: "none",
+          width: "135px",
+          minHeight: "105px",
+          backgroundColor: "#fcfcfd",
+          marginBottom: "10px",
+          color: "#2f3439",
+          position: "relative",
+          transition: "background-color 0.3s",
+          "&:hover": {
+            color: "#115293",
+            border: "1px dashed blue", // Change border on hover
+          },
+        }}
+        onClick={() => onClick(task)} // Call onClick when clicked
+      >
+        {/* Render the icon and label */}
+        <div
+          style={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
             justifyContent: "center",
-            textAlign: "center",
-            fontSize: "11px",
-            lineHeight: "21px",
-            boxSizing: "border-box",
-            // padding: "8px 5px",
-            border: "none",
-            width: "135px",
-            minHeight: "105px",
-            backgroundColor: "#fcfcfd",
-            marginBottom: "10px",
-            color: "#2f3439",
-            position: "relative",
-            transition: "background-color 0.3s",
-            "&:hover": {
-              color: "#115293",
-              border: "1px dashed blue", // Change text color on hover
-            },
+            alignItems: "center",
           }}
-          onClick={() => onClick(task)} // Call onClick when clicked
         >
-          {/* Render the icon and label */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {/* Render the icon */}
-            <div style={{ marginBottom: "4px" }}>{task.design.icon}</div>
-            {/* Render the label */}
-            <div>{task.design.label}</div>
-          </div>
-        </Box>
-      </Grid>
-    </>
+          {/* Render the icon */}
+          <div style={{ marginBottom: "4px" }}>{task.design.icon}</div>
+          {/* Render the label */}
+          <div>{task.design.label}</div>
+        </div>
+      </Box>
+    </Grid>
   );
 };
 
+// DropArea Component
 const DropArea = ({
   droppedInputs,
   onDrop,
@@ -356,7 +291,7 @@ const DropArea = ({
   };
 
   const [{ isOver }, drop] = useDrop({
-    accept: "TASK",
+    accept: ItemType.TASK,
     drop: (item) => onDrop(item.task),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
@@ -371,113 +306,114 @@ const DropArea = ({
         padding: "20px",
         margin: "10px 0",
         boxSizing: "border-box",
+        minHeight: "300px", // Ensure there's enough space
+        border: "2px dashed #ccc",
+        borderRadius: "8px",
       }}
     >
+      {droppedInputs.length === 0 && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100px",
+          }}
+        >
+          <Typography variant="body1" color="textSecondary">
+            Drag a field here
+          </Typography>
+        </div>
+      )}
+
       {droppedInputs.map((task, index) => (
-        <>
-          <Paper
-            key={index}
-            component="form"
-            sx={{
-              p: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-              width: isDone ? 300 : 660,
-              border: !isDone ? "1px dashed #3987d9" : null,
-              marginTop: "12px",
-              cursor: "pointer",
-              backgroundColor: activeTaskId === task.id ? "#e0f7fa" : "white", // Highlight if active
-            }}
-            onClick={() => {
-              // Set the active task and call onTaskClick only if not done
-              if (!isDone) {
-                onTaskClick(task);
-              }
-              setActiveTaskId(task.id); // Set active task
-            }}
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={handleMouseLeave}
-          >
-            {/* Left side IconButton (Menu Icon) */}
-            <IconButton sx={{ p: "4px" }} aria-label="menu" size="small">
-              {task.design.icon}
-            </IconButton>
-            {/* InputBase as task input */}
+        <Paper
+          key={task.uniqueId}
+          component="form"
+          sx={{
+            p: "2px 4px",
+            display: "flex",
+            alignItems: "center",
+            width: isDone ? 300 : 660,
+            border: !isDone ? "1px dashed #3987d9" : null,
+            marginTop: "12px",
+            cursor: "pointer",
+            backgroundColor:
+              activeTaskId === task.uniqueId ? "#e0f7fa" : "white", // Highlight if active
+          }}
+          onClick={() => {
+            // Set the active task and call onTaskClick only if not done
+            if (!isDone) {
+              onTaskClick(task);
+            }
+            setActiveTaskId(task.uniqueId); // Set active task
+          }}
+          onMouseEnter={() => handleMouseEnter(task.uniqueId)}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Left side IconButton (Menu Icon) */}
+          <IconButton sx={{ p: "4px" }} aria-label="menu" size="small">
+            {task.design.icon}
+          </IconButton>
+          {/* InputBase as task input */}
+          {!isDone ? (
+            <InputBase
+              sx={{ ml: 1, flex: 1, cursor: "pointer" }}
+              placeholder={task.properties.label}
+              inputProps={{ "aria-label": task.properties.label }}
+              value={task.value || ""}
+              onChange={(e) => {
+                if (isDone) {
+                  handleInputChange(task.uniqueId, e.target.value);
+                } else {
+                  onTaskClick(task);
+                }
+              }}
+            />
+          ) : (
+            <InputBase
+              sx={{ ml: 1, flex: 1, cursor: "pointer" }}
+              placeholder={task.properties.label}
+              inputProps={{ "aria-label": task.properties.label }}
+              value={task.value || ""}
+              onChange={(e) => {
+                if (!isDone) {
+                  onTaskClick(task);
+                }
+                handleInputChange(task.uniqueId, e.target.value);
+              }}
+              disabled={!isDone} // Disable if not allowed
+            />
+          )}
+          {isDone ? null : (
+            <>
+              <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
 
-            {!isDone ? (
-              <Box
-                sx={{ ml: 1, flex: 1, cursor: "pointer" }}
-                placeholder={task.properties.label}
-                inputProps={{ "aria-label": "search google maps" }}
-                value={task.value || ""}
-                onChange={(e) => {
-                  if (!isDone) {
-                    onTaskClick(task);
-                  }
-                  handleInputChange(task.id, e.target.value);
-                }}
-                disabled={!isDone} // Disable if not allowed
-              ></Box>
-            ) : (
-              <>
-                <InputBase
-                  sx={{ ml: 1, flex: 1, cursor: "pointer" }}
-                  placeholder={task.properties.label}
-                  inputProps={{ "aria-label": "search google maps" }}
-                  value={task.value || ""}
-                  onChange={(e) => {
-                    if (!isDone) {
-                      onTaskClick(task);
-                    }
-                    handleInputChange(task.id, e.target.value);
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => onDeleteTask(task.uniqueId)}
+                  sx={{
+                    color: "default",
+                    "&:hover": {
+                      color: "red",
+                    },
                   }}
-                  disabled={!isDone} // Disable if not allowed
-                />
-              </>
-            )}
-            {isDone ? null : (
-              <>
-                <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => onDeleteTask(task.id)}
-                    sx={{
-                      color: "default",
-                      "&:hover": {
-                        color: "red",
-                      },
-                    }}
-                    disabled={task.disabled || false} // Disable if task is disabled
-                  >
-                    <DeleteIcon />{" "}
-                    {/* Replace with your DirectionsIcon if needed */}
-                  </IconButton>
-                </InputAdornment>
-              </>
-            )}
-          </Paper>
-
-          {/* Show additional properties when task is active */}
-        </>
+                  disabled={task.disabled || false} // Disable if task is disabled
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </InputAdornment>
+            </>
+          )}
+        </Paper>
       ))}
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100px",
-        }}
-      >
-        <p style={{ color: "lightgray" }}>
-          {isOver ? "Drop here to add input field" : "Drag a field here"}
-        </p>
-      </div>
+      {/* Show additional properties when task is active */}
     </div>
   );
 };
 
+// Main App Component
 function App() {
   const [tasks] = useState(initialTasks);
   const [droppedInputs, setDroppedInputs] = useState([]);
@@ -492,23 +428,47 @@ function App() {
   const [btnchnge, setBtnChnage] = useState("");
 
   const [isSubmitEnabled, setIsSubmitEnabled] = useState(false); // Tracks if submit/reset buttons should be enabled
-  const [inputValues, setInputValues] = useState(
-    droppedInputs.reduce((acc, input) => ({ ...acc, [input.id]: "" }), {})
-  ); // Track field values
+  const [inputValues, setInputValues] = useState({}); // Track field values
+
+  // Function to handle input changes
   const handleInputChange = (id, value) => {
     setInputValues((prevValues) => ({
       ...prevValues,
       [id]: value,
     }));
   };
+
+  // Function to handle dropping a task
   const handleDrop = (task) => {
-    setDroppedInputs((prev) => [...prev, task]);
+    // Count existing instances of the task type
+    const existingCount = droppedInputs.filter(
+      (input) => input.type === task.type
+    ).length;
+
+    // Create unique id and name
+    const uniqueId = `${task.id}_${existingCount}`;
+    const uniqueName = `${task.properties.name}_${existingCount}`;
+
+    // Create a new task with unique id and name
+    const newTask = {
+      ...task,
+      uniqueId, // Assign unique id
+      properties: {
+        ...task.properties,
+        id: uniqueId, // Update id
+        name: uniqueName, // Update name
+      },
+      value: "", // Initialize value
+    };
+
+    setDroppedInputs((prev) => [...prev, newTask]);
     setIsDone(false);
   };
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const dashName = queryParams.get("dashName");
+  const dashName = queryParams.get("dashName") || "Dashboard";
+
   const handleDoneClick = () => {
     console.log("Done button clicked");
 
@@ -538,36 +498,46 @@ function App() {
 
   const handleSubmit = () => {
     const payload = droppedInputs.map((input) => ({
-      id: input.id,
+      id: input.uniqueId,
       label: input.properties.label,
-      value: input.value, // Send the user-entered value
+      value: inputValues[input.uniqueId] || "", // Send the user-entered value
     }));
     console.log("payload", payload);
     axios
       .post("https://your-api-endpoint.com/submit", payload)
       .then((response) => {
         console.log("Data submitted successfully:", response.data);
+        // Optionally reset the form after successful submission
       })
       .catch((error) => {
         console.error("Error submitting data:", error);
       });
   };
-  const handleDeleteTask = (id) => {
-    alert("confirm delete");
-    setDroppedInputs((prev) => prev.filter((task) => task.id !== id)); // Remove task by id
+
+  const handleDeleteTask = (uniqueId) => {
+    if (window.confirm("Are you sure you want to delete this field?")) {
+      setDroppedInputs((prev) =>
+        prev.filter((task) => task.uniqueId !== uniqueId)
+      );
+      setInputValues((prev) => {
+        const newValues = { ...prev };
+        delete newValues[uniqueId];
+        return newValues;
+      });
+    }
   };
+
   const handleReset = () => {
     setIsDone(false); // Reset the state
     setIsSubmitEnabled(false); // Disable the submit/reset buttons again
-    setInputValues(
-      droppedInputs.reduce((acc, input) => ({ ...acc, [input.id]: "" }), {})
-    ); // Reset field values
+    setInputValues({}); // Reset field values
+    setDroppedInputs([]); // Optionally clear all dropped inputs
   };
 
   const handleSave = () => {
     setDroppedInputs((prevInputs) =>
       prevInputs.map((task) =>
-        task.id === selectedTask.id
+        task.uniqueId === selectedTask.uniqueId
           ? {
               ...selectedTask,
               content: renderUpdatedContent(selectedTask),
@@ -591,6 +561,8 @@ function App() {
             variant="outlined"
             name={properties.name}
             id={properties.id}
+            value={inputValues[task.uniqueId] || ""}
+            onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
           />
         );
       case "Address":
@@ -601,6 +573,8 @@ function App() {
             variant="outlined"
             name={properties.name}
             id={properties.id}
+            value={inputValues[task.uniqueId] || ""}
+            onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
           />
         );
       case "Phone":
@@ -612,6 +586,8 @@ function App() {
             variant="outlined"
             name={properties.name}
             id={properties.id}
+            value={inputValues[task.uniqueId] || ""}
+            onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
           />
         );
       case "Single Line":
@@ -622,6 +598,8 @@ function App() {
             variant="outlined"
             name={properties.name}
             id={properties.id}
+            value={inputValues[task.uniqueId] || ""}
+            onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
           />
         );
       case "Multi Line":
@@ -634,6 +612,8 @@ function App() {
             rows={4}
             name={properties.name}
             id={properties.id}
+            value={inputValues[task.uniqueId] || ""}
+            onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
           />
         );
       case "Number":
@@ -645,6 +625,8 @@ function App() {
             variant="outlined"
             name={properties.name}
             id={properties.id}
+            value={inputValues[task.uniqueId] || ""}
+            onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
           />
         );
       case "Date":
@@ -656,6 +638,8 @@ function App() {
             variant="outlined"
             name={properties.name}
             id={properties.id}
+            value={inputValues[task.uniqueId] || ""}
+            onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
           />
         );
       case "Time":
@@ -667,12 +651,18 @@ function App() {
             variant="outlined"
             name={properties.name}
             id={properties.id}
+            value={inputValues[task.uniqueId] || ""}
+            onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
           />
         );
       case "Radio":
         return (
           <FormControl>
-            <RadioGroup>
+            <RadioGroup
+              name={properties.name}
+              value={inputValues[task.uniqueId] || ""}
+              onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
+            >
               {properties.options.map((option, index) => (
                 <FormControlLabel
                   key={index}
@@ -689,14 +679,34 @@ function App() {
           <Autocomplete
             multiple
             options={properties.options}
+            value={inputValues[task.uniqueId] || []}
+            onChange={(event, newValue) =>
+              handleInputChange(task.uniqueId, newValue)
+            }
             renderInput={(params) => (
-              <TextField {...params} label="Select options" />
+              <TextField
+                {...params}
+                label={properties.label}
+                placeholder={properties.placeholder}
+              />
             )}
           />
         );
       case "Checkbox":
         return (
-          <FormControlLabel control={<Checkbox />} label={properties.label} />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={inputValues[task.uniqueId] || false}
+                onChange={(e) =>
+                  handleInputChange(task.uniqueId, e.target.checked)
+                }
+                name={properties.name}
+                id={properties.id}
+              />
+            }
+            label={properties.label}
+          />
         );
       default:
         return null;
@@ -736,51 +746,6 @@ function App() {
       case "Single Line":
       case "Multi Line":
       case "Number":
-        return (
-          <>
-            <TextField
-              label="Label"
-              name="label"
-              value={properties.label}
-              onChange={handlePropertyChange}
-              fullWidth
-            />
-            <TextField
-              label="Placeholder"
-              name="placeholder"
-              value={properties.placeholder}
-              onChange={handlePropertyChange}
-              fullWidth
-              sx={{ marginTop: 2 }}
-            />
-            <TextField
-              label="Name"
-              name="name"
-              value={properties.name}
-              onChange={handlePropertyChange}
-              fullWidth
-              sx={{ marginTop: 2 }}
-            />
-            <TextField
-              label="ID"
-              name="id"
-              value={properties.id}
-              onChange={handlePropertyChange}
-              fullWidth
-              sx={{ marginTop: 2 }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={properties.mandatory}
-                  onChange={handleMandatoryChange}
-                />
-              }
-              label="Mandatory"
-              sx={{ marginTop: 2 }}
-            />
-          </>
-        );
       case "Date":
       case "Time":
         return (
@@ -792,6 +757,16 @@ function App() {
               onChange={handlePropertyChange}
               fullWidth
             />
+            {type !== "Date" && type !== "Time" && (
+              <TextField
+                label="Placeholder"
+                name="placeholder"
+                value={properties.placeholder}
+                onChange={handlePropertyChange}
+                fullWidth
+                sx={{ marginTop: 2 }}
+              />
+            )}
             <TextField
               label="Name"
               name="name"
@@ -821,42 +796,6 @@ function App() {
           </>
         );
       case "Radio":
-        return (
-          <>
-            <TextField
-              label="Label"
-              name="label"
-              value={properties.label}
-              onChange={handlePropertyChange}
-              fullWidth
-            />
-            <TextField
-              label="Options (comma separated)"
-              name="options"
-              value={properties.options.join(", ")}
-              onChange={(e) =>
-                handlePropertyChange({
-                  target: {
-                    name: "options",
-                    value: e.target.value.split(",").map((opt) => opt.trim()),
-                  },
-                })
-              }
-              fullWidth
-              sx={{ marginTop: 2 }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={properties.mandatory}
-                  onChange={handleMandatoryChange}
-                />
-              }
-              label="Mandatory"
-              sx={{ marginTop: 2 }}
-            />
-          </>
-        );
       case "Multi Select":
         return (
           <>
@@ -924,16 +863,22 @@ function App() {
   const handleUpdateInput = (id, value) => {
     // Update the droppedInputs array when input values change
     const updatedInputs = droppedInputs.map((input) =>
-      input.id === id ? { ...input, value } : input
+      input.uniqueId === id ? { ...input, value } : input
     );
     setDroppedInputs(updatedInputs); // Update state with new input values
+    setInputValues((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
   };
 
   const handleToggle = () => {
     setExpanded(!expanded);
   };
+
   return (
     <>
+      {/* AppBar */}
       <AppBar
         position="static"
         sx={{ backgroundColor: "#293040", boxShadow: "none" }}
@@ -971,8 +916,11 @@ function App() {
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* DnD Provider */}
       <DndProvider backend={HTML5Backend}>
         <Grid container spacing={0}>
+          {/* Sidebar for Draggable Tasks */}
           <Grid item xs={3} style={{ backgroundColor: "white" }}>
             <Accordion
               expanded={expanded}
@@ -983,7 +931,7 @@ function App() {
                 height: "800px",
                 width: "330px",
                 overflowY: "auto", // Enable vertical scrolling
-                overflowX: "hidden", // Optional: Disable horizontal scrolling
+                overflowX: "hidden", // Disable horizontal scrolling
                 "&::-webkit-scrollbar": {
                   width: "4px", // Scrollbar width
                 },
@@ -992,14 +940,14 @@ function App() {
                 },
                 "&::-webkit-scrollbar-thumb": {
                   backgroundColor: "#888", // Scrollbar thumb color
-                  borderRadius: "4px", // Optional: Make the scrollbar rounded
+                  borderRadius: "4px", // Make the scrollbar rounded
                 },
                 "&::-webkit-scrollbar-thumb:hover": {
                   backgroundColor: "#555", // Scrollbar thumb hover color
                 },
                 // For Firefox:
                 scrollbarColor: "#888 #f0f0f0", // thumb color, track color
-                scrollbarWidth: "thin", // Set
+                scrollbarWidth: "thin", // Set scrollbar width
               }}
             >
               <AccordionSummary
@@ -1023,24 +971,19 @@ function App() {
                     height: "105px",
                   }}
                 >
-                  {tasks.map((task) => (
-                    <Grid
-                      item
-                      xs={6}
-                      key={task.id}
-                      style={{ backgroundColor: "#f4f6fa", marginTop: 8 }}
-                    >
-                      <DraggableTask
-                        key={task.id}
-                        task={task}
-                        onClick={handleTaskClick}
-                      />
-                    </Grid>
-                  ))}
+                  <Grid container spacing={1}>
+                    {tasks.map((task, index) => (
+                      <Grid item xs={6} key={task.id}>
+                        <DraggableTask task={task} onClick={handleTaskClick} />
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Grid>
               </AccordionDetails>
             </Accordion>
           </Grid>
+
+          {/* Main Drop Area */}
           <Grid item xs={6}>
             <Box sx={{ padding: "10px" }}>
               <DropArea
@@ -1051,25 +994,24 @@ function App() {
                 onUpdateInput={handleUpdateInput} // Pass the function here
                 isDone={isDone}
               />
-              {/* "Submit" button */}
+              {/* "Submit" and "Reset" buttons */}
               {droppedInputs.length === 0 ? null : (
-                <div>
+                <div style={{ marginTop: "20px" }}>
                   <Button
                     variant="contained"
                     color="success"
                     onClick={handleSubmit}
                     sx={{ marginRight: 1 }}
-                    disabled={!isSubmitEnabled} // Enable only when "Access the application" is clicked
+                    disabled={!isSubmitEnabled} // Enable only when "Done" is clicked
                   >
                     Submit
                   </Button>
 
-                  {/* "Reset" button */}
                   <Button
                     variant="outlined"
                     color="secondary"
                     onClick={handleReset}
-                    disabled={!isSubmitEnabled} // Enable only when "Access the application" is clicked
+                    disabled={!isSubmitEnabled} // Enable only when "Done" is clicked
                   >
                     Reset
                   </Button>
@@ -1077,6 +1019,8 @@ function App() {
               )}
             </Box>
           </Grid>
+
+          {/* Sidebar for Field Properties */}
           {droppedInputs.length === 0 ? null : (
             <Grid item xs={3}>
               <AppBar
@@ -1085,7 +1029,7 @@ function App() {
                   backgroundColor: "#fcfcfd",
                   color: "#333333",
                   boxShadow: "none",
-                  borderLeft: "2px solid #f0f2f6", // Add right border
+                  borderLeft: "2px solid #f0f2f6", // Add left border
                   borderBottom: "2px solid #f0f2f6", // Add bottom border
                 }}
               >
@@ -1100,10 +1044,11 @@ function App() {
                   backgroundColor: "#fcfcfd",
                   color: "#333333",
                   borderLeft: "2px solid #f0f2f6",
+                  height: "800px",
+                  overflowY: "auto",
                 }}
               >
                 {renderPropertyFields()}
-                {/* <Divider /> */}
                 <Button
                   variant="contained"
                   color="primary"
