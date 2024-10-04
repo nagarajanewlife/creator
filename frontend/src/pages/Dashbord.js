@@ -62,7 +62,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     getApplication();
-  });
+  },[user]);
 
   const getApplication = () => {
     axios
@@ -75,6 +75,34 @@ export default function Dashboard() {
       .catch((error) => {
         console.error("Error getting dashboard Apps:", error);
       });
+  };
+  const deleteApplication = (arg) => {
+    //alert ("Delete API called"+arg._id);
+    if(!arg._id)
+    {
+      alert("Please select valid application!");
+    }
+    const appID = arg._id;
+    
+    console.log("APP ID",arg._id);
+    axios
+    .post(`http://localhost:6969/deleteDashboard/${appID}`)
+    .then((response) => {
+      //debugger;
+     // Refresh the list
+       getApplication();
+       setAppAnchorEl(null);
+      alert("Dashboard deleted successfully!");
+      console.log("delete function called:",response);
+     
+    })
+    .catch((error) => {
+      console.error("Error deleting dashboard:", error);
+      alert("Error deleting dashboard.");
+    });
+     
+    return;
+    
   };
 
   // Handle search filter
@@ -321,7 +349,7 @@ export default function Dashboard() {
             <Block fontSize="small" sx={{ marginRight: 1 }} />
             Disable
           </MenuItem>
-          <MenuItem>
+          <MenuItem    onClick={() => deleteApplication(selectedApp)}>
             <Delete fontSize="small" sx={{ marginRight: 1 }} />
             Delete
           </MenuItem>

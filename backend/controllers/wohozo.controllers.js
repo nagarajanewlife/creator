@@ -33,6 +33,23 @@ export const DashboardCreate = async (req, res) => {
   }
 };
 
+
+
+//delete dashboard
+
+
+// delete the application
+export const DashboardDelete = async (req, res) => {
+  const { appID } = req.params;
+  try {
+    const result = await Wohozodash.deleteOne({ _id: appID });
+    console.log(result);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return res.status(400).json({ message: error.message });
+  }
+};
 // get dashboard Application
 
 export const DashboardAppsDetails = async (req, res) => {
