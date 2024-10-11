@@ -37,6 +37,26 @@ const dashSchema = new Schema(
     timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
   }
 );
+//form table
+const formTable = new Schema(
+  {
+    uid: {
+      type: String,
+      required: true, // Mark as required if needed
+    },
+    dashid: {
+      type: String,
+      required: true, // Mark as required if needed
+    },
+    formName: {
+      type: String,
+      required: true, // Mark as required if needed
+    },
+  },
+  {
+    timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
+  }
+);
 
 // employes table
 
@@ -84,6 +104,7 @@ const Wohozouser = model("Wohozouser", userSchema);
 const Wohozodash = model("Wohozodash", dashSchema);
 const EmployeeTable = model("Employee", EmployeeSchema);
 const TimesheetTable = model("Timesheet", TimesheetSchema);
+const FormTable = model("FormTable", formTable);
 
 // Export both models
-export { Wohozouser, Wohozodash, EmployeeTable, TimesheetTable };
+export { Wohozouser, Wohozodash, EmployeeTable, TimesheetTable, FormTable };
