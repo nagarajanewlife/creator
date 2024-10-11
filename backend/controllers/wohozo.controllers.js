@@ -2,6 +2,7 @@
 import {
   Wohozouser,
   Wohozodash,
+  FormTable,
   EmployeeTable,
   TimesheetTable,
 } from "../models/wohozo.models.js";
@@ -49,8 +50,55 @@ export const DashboardCreate = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+// form taable create
+export const FormCreate = async (req, res) => {
+  console.log("Request body:", req.body); // Log the request body to check the payload
 
-// get dashboard Application
+  const newFormAdd = new FormTable({
+    uid: req.body.uid,
+    dashid: req.body.dashid,
+    formName: req.body.formName,
+  });
+
+  try {
+    const formAdd = await newFormAdd.save();
+    console.log("Form saved:", formAdd); // Log the saved form details
+    return res.status(201).json(formAdd);
+  } catch (error) {
+    console.error("Error saving form:", error); // Log the error
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+//get all form  details
+export const Getallforms = async (req, res) => {
+  const { uid, dashid } = req.params; // Get UID and dashid from route parameters
+
+  try {
+    // Check if both uid and dashid are provided
+    if (!uid || !dashid) {
+      return res.status(400).json({ message: "UID and dashid are required" });
+    }
+
+    // Fetch records based on the provided uid and dashid
+    const allforms = await FormTable.find({ uid, dashid });
+
+    // Check if any records are found
+    if (allforms.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No records found for the given UID and dashid" });
+    }
+
+    // Return the records if found
+    res.status(200).json(allforms);
+  } catch (error) {
+    console.error("Error fetching forms: ", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// get dashboard Applicatio
 
 export const DashboardAppsDetails = async (req, res) => {
   const { uid } = req.params; // Get UID from the route parameter

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="244px" height="214px" viewBox="0 0 244 214" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43 (38999) - http://www.bohemiancoding.com/sketch -->
+    <title>Untitled 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M150.669434,68.3370489 L154.202637,68.3370489 M157.724121,68.3370489 L180.493473,68.3370489 C181.601647,68.3370489 182.5,69.2278796 182.5,70.3417229 L182.5,155.476211 L57.5,155.476211 L57.5,70.3417229 L57.5,70.3417229 C57.5,69.234572 58.3949396,68.3370489 59.5040267,68.3370489 L146.463867,68.3370489" id="path-1"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle-3">
+            <use fill="#FAFBFD" fill-rule="evenodd" xlink:href="#path-1"></use>
+            <path stroke="#3485DC" stroke-width="1" d="M182,154.976211 L58,154.976211 L58,70.3417229 C58,69.5097967 58.6719989,68.8370489 59.5040267,68.8370489 L146.463867,68.8370489 L157.724121,68.8370489 L180.493473,68.8370489 C181.328185,68.8370489 182,69.5066958 182,70.3417229 L182,154.976211 Z"></path>
+        </g>
+        <rect id="Rectangle-5" stroke="#3485DC" x="101" y="89.9066301" width="10" height="10"></rect>
+        <path d="M58.4294939,75.9066301 L171.429494,75.9066301" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <circle id="Oval" fill="#B0CFF0" cx="62.5" cy="72.4066301" r="1"></circle>
+        <circle id="Oval" fill="#B0CFF0" cx="66.5" cy="72.4066301" r="1"></circle>
+        <circle id="Oval" fill="#B0CFF0" cx="70.5" cy="72.4066301" r="1"></circle>
+        <path d="M119.5,13.4066301 C102.744721,13.4066301 86.9519017,17.5274069 73.0797151,24.8107865 M57.0388225,35.3083877 C34.1550114,53.6341326 19.5,81.8089507 19.5,113.40663 M38.5037558,172.067054 C56.6768499,197.116345 86.1860249,213.40663 119.5,213.40663 C154.538114,213.40663 185.367407,195.386529 203.225712,168.108496 M219.5,113.40663 C219.5,78.5046349 201.619639,47.7788219 174.519361,29.8896366" id="Oval-2" stroke="#3485DC"></path>
+        <circle id="Oval" stroke="#3485DC" fill="#EEF6FF" cx="170.5" cy="199.40663" r="5"></circle>
+        <circle id="Oval" fill="#EEF6FF" cx="221" cy="135.90663" r="5.5"></circle>
+        <circle id="Oval" stroke="#3485DC" cx="220" cy="134.90663" r="5.5"></circle>
+        <circle id="Oval" stroke="#3485DC" fill="#EEF6FF" cx="16" cy="75.9066301" r="2.5"></circle>
+        <circle id="Oval" stroke="#3485DC" fill="#EEF6FF" cx="65" cy="29.9066301" r="2.5"></circle>
+        <circle id="Oval" stroke="#3485DC" fill="#EEF6FF" cx="197" cy="33.9066301" r="2.5"></circle>
+        <circle id="Oval" stroke="#3485DC" fill="#EEF6FF" cx="156" cy="52.9066301" r="1.5"></circle>
+        <circle id="Oval" stroke="#3485DC" fill="#EEF6FF" cx="220" cy="114.90663" r="2.5"></circle>
+        <text id="x" transform="translate(208.000000, 167.406630) rotate(30.000000) translate(-208.000000, -167.406630) " font-family=".AppleSystemUIFont" font-size="10" font-weight="normal" fill="#3485DC">
+            <tspan x="205.5" y="172.40663">x</tspan>
+        </text>
+        <text id="x" transform="translate(36.500000, 180.906630) scale(-1, 1) rotate(30.000000) translate(-36.500000, -180.906630) " font-family=".AppleSystemUIFont" font-size="7" font-weight="normal" fill="#B4C5D7">
+            <tspan x="34.5" y="184.40663">x</tspan>
+        </text>
+        <text id="x" transform="translate(126.000000, 13.406630) scale(-1, 1) rotate(30.000000) translate(-126.000000, -13.406630) " font-family=".AppleSystemUIFont" font-size="10" font-weight="normal" fill="#3485DC">
+            <tspan x="123.5" y="18.4066301">x</tspan>
+        </text>
+        <text id="x" transform="translate(14.500000, 113.906630) scale(-1, 1) rotate(30.000000) translate(-14.500000, -113.906630) " font-family=".AppleSystemUIFont" font-size="7" font-weight="normal" fill="#3485DC">
+            <tspan x="12.5" y="117.40663">x</tspan>
+        </text>
+        <text id="x" transform="translate(87.500000, 41.906630) scale(-1, 1) rotate(30.000000) translate(-87.500000, -41.906630) " font-family=".AppleSystemUIFont" font-size="7" font-weight="normal" fill="#3485DC">
+            <tspan x="85.5" y="45.4066301">x</tspan>
+        </text>
+        <rect id="Rectangle-4" fill="#F0F5FF" x="58.5" y="76.4066301" width="30" height="78"></rect>
+        <circle id="Oval-3" fill="#3485DC" cx="72.5" cy="89.4066301" r="5"></circle>
+        <path d="M64,99.9066301 L81,99.9066301" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M118,90.9066301 L165,90.9066301" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M118,95.9066301 L145,95.9066301" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <rect id="Rectangle-5" stroke="#3485DC" x="101" y="109.90663" width="10" height="10"></rect>
+        <path d="M118,110.90663 L165,110.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M118,115.90663 L145,115.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <rect id="Rectangle-5" stroke="#3485DC" x="101" y="129.90663" width="10" height="10"></rect>
+        <path d="M118,130.90663 L165,130.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M118,135.90663 L145,135.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M64,105.90663 L81,105.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M64,111.90663 L81,111.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M64,117.90663 L81,117.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M64,123.90663 L81,123.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M64,129.90663 L81,129.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M64,135.90663 L81,135.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M64,141.90663 L81,141.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <rect id="Rectangle-6" fill="#E2E7EB" x="13.5" y="133.40663" width="27" height="27" rx="2"></rect>
+        <path d="M34.9992676,129.90663 L37.4997028,129.90663 C38.3264083,129.90663 39,130.578732 39,131.398247 L39,157.415013 C39,158.236447 38.3283845,158.90663 37.508383,158.90663 L11.491617,158.90663 C10.670183,158.90663 10,158.235015 10,157.415013 L10,131.398247 C10,130.577854 10.6768023,129.90663 11.5031819,129.90663 L27.730957,129.90663 L34.9992676,129.90663 Z" id="Rectangle-6" stroke="#3485DC"></path>
+        <rect id="Rectangle-6" fill="#EEF6FF" x="11.5" y="131.40663" width="27" height="27" rx="2"></rect>
+        <path d="M24.5,137.40663 L24.5,149.40663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M24.5,137.40663 L24.5,149.40663" id="Line" stroke="#3485DC" stroke-linecap="square" transform="translate(24.500000, 143.406630) rotate(90.000000) translate(-24.500000, -143.406630) "></path>
+        <path d="M4,124.90663 L6.82842712,127.735057" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+        <path d="M7.5298575,123.40663 L11.5298575,123.40663" id="Line" stroke="#3485DC" stroke-linecap="square" transform="translate(9.529857, 123.906630) rotate(90.000000) translate(-9.529857, -123.906630) "></path>
+        <path d="M3,132.734194 L3,128.734194" id="Line" stroke="#3485DC" stroke-linecap="square" transform="translate(3.000000, 130.734194) rotate(90.000000) translate(-3.000000, -130.734194) "></path>
+        <path d="M157.498238,8.26015863 L157.498238,5.4066301 L147.498238,5.4066301 L147.498238,8.26015863 C145.30302,9.03605716 143.342337,10.3084538 141.751117,11.9424228 L138.993712,10.5975464 L134.610001,19.5854869 L137.561038,21.0248041 C137.519477,21.479842 137.498238,21.9407558 137.498238,22.4066301 C137.498238,23.6808426 137.657118,24.9179467 137.956148,26.0992128 L135.304498,27.7561474 L140.603691,36.2366284 L143.512918,34.4187411 C144.714571,35.3190489 146.055772,36.0432627 147.498238,36.5531016 L147.498238,39.4066301 L157.498238,39.4066301 L157.498238,36.5531016 C158.990119,36.0257974 160.373676,35.2691793 161.606559,34.3255985 L164.392786,36.0666266 L169.691979,27.5861457 L167.076799,25.9519996 C167.35226,24.8153018 167.498238,23.6280135 167.498238,22.4066301 C167.498238,21.9407558 167.477,21.479842 167.435439,21.0248041 L170.386476,19.5854869 L166.002765,10.5975464 L163.24536,11.9424228 C161.65414,10.3084538 159.693457,9.03605716 157.498238,8.26015863 Z" id="Combined-Shape" fill="#EEF6FF"></path>
+        <path d="M163.774315,10.266129 L167.719655,18.3552754 L165.218015,19.5754071 L164.907888,19.7266659 L164.939273,20.0702829 C164.979672,20.5125938 165,20.9583389 165,21.4066301 C165,22.5731299 164.862353,23.7212047 164.592625,24.8342407 L164.50766,25.1848509 L164.813601,25.3760237 L167.004757,26.7452101 L162.235484,34.377643 L159.87328,32.9015745 L159.579516,32.7180104 L159.304435,32.9285422 C158.102076,33.8487622 156.762965,34.5763947 155.333377,35.0816816 L155,35.1995135 L155,35.5531016 L155,37.9066301 L146,37.9066301 L146,35.5531016 L146,35.1995135 L145.666623,35.0816816 C144.284191,34.593062 142.986195,33.8964686 141.814481,33.0185922 L141.540281,32.8131546 L141.24972,32.994717 L138.764516,34.5476447 L133.995243,26.9152118 L136.222869,25.5232368 L136.532104,25.330005 L136.44262,24.9765115 C136.149673,23.8192751 136,22.6230113 136,21.4066301 C136,20.9583389 136.020328,20.5125938 136.060727,20.0702829 L136.092112,19.7266659 L135.781985,19.5754071 L133.280345,18.3552754 L137.225685,10.266129 L139.533693,11.3918198 L139.85876,11.5503654 L140.111087,11.2912593 C141.664645,9.69596364 143.564997,8.47439679 145.666623,7.73157858 L146,7.61374673 L146,7.26015863 L146,4.9066301 L155,4.9066301 L155,7.26015863 L155,7.61374673 L155.333377,7.73157858 C157.435003,8.47439679 159.335355,9.69596364 160.888913,11.2912593 L161.14124,11.5503654 L161.466307,11.3918198 L163.774315,10.266129 Z" id="Combined-Shape" stroke="#3485DC"></path>
+        <path d="M151.772909,17.769339 C151.228862,17.5358985 150.629527,17.4066301 150,17.4066301 C147.514719,17.4066301 145.5,19.4213487 145.5,21.9066301 C145.5,24.3919115 147.514719,26.4066301 150,26.4066301 C152.485281,26.4066301 154.5,24.3919115 154.5,21.9066301 C154.5,21.3349449 154.393395,20.7881586 154.19898,20.2850659 C154.040355,19.8745869 153.823273,19.4931953 153.557943,19.1510996 C153.395804,18.9420487 153.215647,18.7476722 153.019803,18.5702994" id="Oval-4" stroke="#3485DC" fill="#EEF6FF"></path>
+        <path d="M170.5,12.4066301 C170.5,8.54063685 167.365993,5.4066301 163.5,5.4066301" id="Oval-5" stroke="#3485DC" transform="translate(167.000000, 8.906630) rotate(7.000000) translate(-167.000000, -8.906630) "></path>
+        <path d="M168.5,4.4066301 C168.5,2.74977585 167.156854,1.4066301 165.5,1.4066301" id="Oval-5" stroke="#3485DC" transform="translate(167.000000, 2.906630) rotate(-19.000000) translate(-167.000000, -2.906630) "></path>
+        <path d="M217.597046,135.310072 C217.597046,135.310072 216.871216,132.972914 219.582275,132.331557" id="Path-2" stroke="#3485DC"></path>
+        <circle id="Oval" fill="#EEF6FF" cx="202" cy="153.90663" r="5.5"></circle>
+        <circle id="Oval" stroke="#3485DC" cx="201" cy="152.90663" r="5.5"></circle>
+        <path d="M198.597046,153.310072 C198.597046,153.310072 197.871216,150.972914 200.582275,150.331557" id="Path-2" stroke="#3485DC"></path>
+        <circle id="Oval" fill="#EEF6FF" cx="233" cy="160.90663" r="5.5"></circle>
+        <circle id="Oval" stroke="#3485DC" cx="232" cy="159.90663" r="5.5"></circle>
+        <path d="M229.597046,160.310072 C229.597046,160.310072 228.871216,157.972914 231.582275,157.331557" id="Path-2" stroke="#3485DC"></path>
+        <path d="M204,147.90663 L214,139.90663" id="Path-3" stroke="#3485DC"></path>
+        <path d="M208.473633,159.00331 L226.325684,155.845351" id="Path-3" stroke="#3485DC" transform="translate(217.399658, 157.424330) scale(1, -1) translate(-217.399658, -157.424330) "></path>
+        <path d="M231.409032,152.04009 C231.409032,152.04009 236.665996,149.735047 239.773309,154.937655" id="Path-4" stroke="#3485DC" transform="translate(235.591170, 153.234488) rotate(11.000000) translate(-235.591170, -153.234488) "></path>
+        <path d="M242.561984,154.092349 C242.906463,152.471701 241.871924,150.878651 240.251276,150.534171" id="Oval-5" stroke="#3485DC" transform="translate(241.439717, 152.313260) rotate(11.000000) translate(-241.439717, -152.313260) "></path>
+        <polygon id="Triangle" fill="#EEF6FF" points="79 44.4066301 84.5 53.4066301 73.5 53.4066301"></polygon>
+        <polygon id="Triangle" stroke="#3485DC" points="78 42.4066301 83.5 51.4066301 72.5 51.4066301"></polygon>
+        <rect id="Rectangle-7" fill="#EEF6FF" x="128.5" y="175.40663" width="10" height="10"></rect>
+        <rect id="Rectangle-7" stroke="#3485DC" x="127" y="173.90663" width="9" height="9"></rect>
+        <path d="M97,176.90663 L122,176.90663" id="Line" stroke="#3484DB" stroke-linecap="square"></path>
+        <path d="M84,180.90663 L102.099854,180.90663 M103.733643,180.90663 L105.844971,180.90663 M107.47876,180.90663 L109,180.90663" id="Line" stroke="#3485DC" stroke-linecap="square"></path>
+    </g>
+</svg>

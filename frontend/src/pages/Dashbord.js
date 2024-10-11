@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { auth } from "../components/firebase"; // Firebase config
+import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
+import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
 import axios from "axios";
+import { DashboardContext } from "./DashboardContext";
+
 import {
   AppBar,
   Toolbar,
@@ -32,10 +36,13 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { Divider } from "@mui/material";
+
 import MoreVert from "@mui/icons-material/MoreHoriz";
 import { Edit, Delete, ContentCopy, Info, Block } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import GridViewIcon from "@mui/icons-material/GridView";
+import EditCalendarOutlinedIcon from "@mui/icons-material/EditCalendarOutlined";
 import {
   Build as SolutionsIcon,
   DataUsage as MicroservicesIcon,
@@ -58,7 +65,8 @@ import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstruct
 import SelectAllIcon from "@mui/icons-material/SelectAll";
 import { useSpring, animated } from "@react-spring/web";
 import Creatorimg from "./images/edit.png";
-import ApplicationCrate from "./ApplicationPopup";
+import ApplicationCrate from "./ApplicationCreatePopup";
+import CollectionsOutlinedIcon from "@mui/icons-material/CollectionsOutlined";
 
 // Custom Hook for handling the hover animation of each card
 const useCardHoverAnimation = (hoveredCard, cardName) => {
@@ -96,11 +104,29 @@ export default function Dashboard() {
   const [selectedDashboard, setSelectedDashboard] = useState(null);
   const [activeItem, setActiveItem] = useState(null); // State for active menu item
   const [hoveredCard, setHoveredCard] = useState(null); // Track the hovered card
+  const [openApp, setOpenApp] = useState(false); // For dashboard creation dialog
+  const [openAppName, setOpenAppName] = useState(false); // For dashboard creation dialog
 
   const handleSelect = (label) => {
     alert(label);
+
+    // For dashboard creation dialog
+    switch (label) {
+      case "Applications":
+        setOpenApp(true); // Call setOpenApp to open the dialog
+        break;
+      case "Create from scratch":
+        setOpenAppName(true);
+        break;
+
+      // Add other cases here if needed
+      default:
+        console.log("No matching case for: " + label);
+    }
+
     console.log(`${label} selected`);
   };
+
   const [avatarColor, setAvatarColor] = useState(getRandomAvatarColor());
   useEffect(() => {
     const interval = setInterval(() => {
@@ -194,9 +220,12 @@ export default function Dashboard() {
       .post("http://localhost:6969/createDashboard", sendData)
       .then((response) => {
         alert("Dashboard created successfully!");
+        setFormNameC(dashName);
         setOpen(false);
         setDashName("");
         getApplication(); // Refresh the list
+        const editUrl = `/appbuilder/${user?.displayName}/${dashName}/edit`;
+        window.location.href = editUrl;
       })
       .catch((error) => {
         console.error("Error creating dashboard:", error);
@@ -212,7 +241,18 @@ export default function Dashboard() {
     setOpen(false);
     setDashName("");
   };
+  const handleCloseApp = () => {
+    setOpenApp(false);
+    setOpen(false);
+    setDashName("");
+  };
 
+  const handleCloseAppName = () => {
+    setOpenApp(false);
+    setOpenAppName(false);
+    setOpen(false);
+    setDashName("");
+  };
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -230,89 +270,9 @@ export default function Dashboard() {
     setAppAnchorEl(null);
   };
 
-  const CardWithHover = ({
-    cardName,
-    paragraph,
-    hoveredCard,
-    setHoveredCard,
-    icon,
-    onSelect,
-  }) => {
-    const { cardSpring, iconSpring } = useCardHoverAnimation(
-      hoveredCard,
-      cardName
-    );
+  // use
+  const { formNameC, setFormNameC } = useContext(DashboardContext);
 
-    return (
-      <animated.div
-        style={cardSpring}
-        onMouseEnter={() => setHoveredCard(cardName)}
-        onMouseLeave={() => setHoveredCard(null)}
-        onClick={onSelect}
-      >
-        <Box
-          sx={{
-            width: "380px",
-            height: "274px",
-            textAlign: "center",
-            borderRadius: "16px",
-            backgroundColor: "#fff",
-
-            cursor: "pointer",
-            padding: "16px",
-            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-            position: "relative",
-          }}
-        >
-          <animated.div
-            style={{
-              position: "absolute",
-              top: "-32px",
-              left: "45%",
-              transform: "translateX(-50%)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "#295bf9",
-              borderRadius: "50%",
-              padding: "16px",
-              border: "2px solid #295bf9",
-              width: "30px",
-              height: "30px",
-              transform: "rotate(45deg)",
-            }}
-          >
-            <animated.div style={iconSpring}>
-              {React.cloneElement(icon, {
-                sx: { ...icon.props.sx, transform: "rotate(-45deg)" },
-              })}
-            </animated.div>
-          </animated.div>
-
-          <Typography variant="h6" sx={{ marginTop: "40px", fontSize: "18px" }}>
-            {cardName}
-            <br></br>
-            <p style={{ fontSize: "16px" }}>{paragraph}</p>
-          </Typography>
-
-          <Button
-            variant="contained"
-            onClick={onSelect}
-            startIcon={<SelectAllIcon sx={{ fontSize: "58px" }} />}
-            sx={{
-              marginTop: "16px",
-              backgroundColor: "#295bf9",
-              "&:hover": {
-                backgroundColor: "#1a46d0",
-              },
-            }}
-          >
-            Select
-          </Button>
-        </Box>
-      </animated.div>
-    );
-  };
   // Function to get color based on app index or ID
   const getAvatarColor = (index) => avatarColors[index % avatarColors.length];
 
@@ -382,7 +342,7 @@ export default function Dashboard() {
       </AppBar>
 
       {/* Main content */}
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", position: "fixed" }}>
         <Drawer
           variant="permanent"
           sx={{
@@ -449,7 +409,6 @@ export default function Dashboard() {
             )}
           </List>
         </Drawer>
-
         <Box
           component="main"
           sx={{ flexGrow: 1, backgroundColor: "white", padding: "2px" }}
@@ -508,7 +467,26 @@ export default function Dashboard() {
               </Toolbar>
             </AppBar>
           ) : null}
-          <Box>
+          <Box
+            container
+            spacing={2}
+            sx={{
+              marginTop: "20px",
+              overflowY: "auto", // Enable vertical scrolling
+              maxHeight: "700px", // Set the maximum height for the scroll area
+              paddingRight: "10px", // Add padding for better scroll bar visibility
+              "&::-webkit-scrollbar": {
+                width: "8px", // Customize scrollbar width for Webkit browsers
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#888", // Customize scrollbar color
+                borderRadius: "4px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                backgroundColor: "#555", // Customize scrollbar color on hover
+              },
+            }}
+          >
             {/* Button for creating a new application */}
             {filteredApps.length > 0 ? null : (
               <Box
@@ -684,7 +662,6 @@ export default function Dashboard() {
                   ))
                 : null}
             </Grid>
-
             {/* App-specific menu */}
             <Menu
               anchorEl={appAnchorEl}
@@ -716,7 +693,6 @@ export default function Dashboard() {
                 Delete
               </MenuItem>
             </Menu>
-
             {/* Dialog for creating a new dashboard */}
             <Dialog
               open={open}
@@ -759,51 +735,650 @@ export default function Dashboard() {
                 <Grid container spacing={4} justifyContent="center">
                   {/* Applications Card */}
                   <Grid item xs={12} sm={4}>
-                    <CardWithHover
-                      cardName="Applications"
-                      paragraph="Create mobile and web apps to handle simple tasks and complex automations"
-                      hoveredCard={hoveredCard}
-                      setHoveredCard={setHoveredCard}
-                      icon={
-                        <AppsIcon sx={{ color: "white", fontSize: "32px" }} />
-                      }
-                      onSelect={() => handleSelect("Applications")}
-                    />
+                    <animated.div
+                      // style={cardSpring}
+                      onMouseEnter={() => setHoveredCard("Applications")}
+                      onMouseLeave={() => setHoveredCard(null)}
+                    >
+                      <Box
+                        sx={{
+                          width: "380px",
+                          height: "274px",
+                          textAlign: "center",
+                          borderRadius: "16px",
+                          backgroundColor: "#fff",
+
+                          cursor: "pointer",
+                          padding: "16px",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                          position: "relative",
+                        }}
+                      >
+                        <animated.div
+                          style={{
+                            position: "absolute",
+                            top: "-32px",
+                            left: "45%",
+                            transform: "translateX(-50%)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "#295bf9",
+                            borderRadius: "50%",
+                            padding: "16px",
+                            border: "2px solid #295bf9",
+                            width: "30px",
+                            height: "30px",
+                            transform: "rotate(45deg)",
+                          }}
+                        >
+                          <animated.div>
+                            <AppsIcon
+                              sx={{ color: "white", fontSize: "32px" }}
+                            />
+                          </animated.div>
+                        </animated.div>
+
+                        <Typography
+                          variant="h6"
+                          sx={{ marginTop: "40px", fontSize: "18px" }}
+                        >
+                          Application
+                          <br></br>
+                          <p style={{ fontSize: "16px" }}>
+                            Create mobile and web apps to handle simple tasks
+                            and complex automations
+                          </p>
+                        </Typography>
+
+                        <Button
+                          variant="contained"
+                          onClick={() => handleSelect("Applications")}
+                          startIcon={
+                            <SelectAllIcon sx={{ fontSize: "58px" }} />
+                          }
+                          sx={{
+                            marginTop: "16px",
+                            backgroundColor: "#295bf9",
+                            "&:hover": {
+                              backgroundColor: "#1a46d0",
+                            },
+                          }}
+                        >
+                          Select
+                        </Button>
+                      </Box>
+                    </animated.div>
                   </Grid>
 
                   {/* BI & Analytics Card */}
                   <Grid item xs={12} sm={4}>
-                    <CardWithHover
-                      cardName="BI & Analytics"
-                      paragraph=" Unify data from multiple sources to create interactive and insightful reports"
-                      hoveredCard={hoveredCard}
-                      setHoveredCard={setHoveredCard}
-                      icon={
-                        <BarChartIcon
-                          sx={{ color: "white", fontSize: "32px" }}
-                        />
-                      }
-                      onSelect={() => handleSelect("BI & Analytics")}
-                    />
+                    <animated.div
+                      // style={cardSpring}
+                      onMouseEnter={() => setHoveredCard("BI & Analytics")}
+                      onMouseLeave={() => setHoveredCard(null)}
+                    >
+                      <Box
+                        sx={{
+                          width: "380px",
+                          height: "274px",
+                          textAlign: "center",
+                          borderRadius: "16px",
+                          backgroundColor: "#fff",
+
+                          cursor: "pointer",
+                          padding: "16px",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                          position: "relative",
+                        }}
+                      >
+                        <animated.div
+                          style={{
+                            position: "absolute",
+                            top: "-32px",
+                            left: "45%",
+                            transform: "translateX(-50%)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "#295bf9",
+                            borderRadius: "50%",
+                            padding: "16px",
+                            border: "2px solid #295bf9",
+                            width: "30px",
+                            height: "30px",
+                            transform: "rotate(45deg)",
+                          }}
+                        >
+                          <animated.div>
+                            <BarChartIcon
+                              sx={{ color: "white", fontSize: "32px" }}
+                            />
+                          </animated.div>
+                        </animated.div>
+
+                        <Typography
+                          variant="h6"
+                          sx={{ marginTop: "40px", fontSize: "18px" }}
+                        >
+                          BI & Analytics
+                          <br></br>
+                          <p style={{ fontSize: "16px" }}>
+                            Unify data from multiple sources to create
+                            interactive and insightful reports
+                          </p>
+                        </Typography>
+
+                        <Button
+                          variant="contained"
+                          onClick={() => handleSelect("BI & Analytics")}
+                          startIcon={
+                            <SelectAllIcon sx={{ fontSize: "58px" }} />
+                          }
+                          sx={{
+                            marginTop: "16px",
+                            backgroundColor: "#295bf9",
+                            "&:hover": {
+                              backgroundColor: "#1a46d0",
+                            },
+                          }}
+                        >
+                          Select
+                        </Button>
+                      </Box>
+                    </animated.div>
                   </Grid>
 
                   {/* Integration Flow Card */}
                   <Grid item xs={12} sm={4}>
-                    <CardWithHover
-                      cardName="Integration Flow"
-                      paragraph=" Create efficient workflow automation that connects to hundreds of popular cloud apps"
-                      hoveredCard={hoveredCard}
-                      setHoveredCard={setHoveredCard}
-                      icon={
-                        <IntegrationInstructionsIcon
-                          sx={{ color: "white", fontSize: "32px" }}
-                        />
-                      }
-                      onSelect={() => handleSelect("Integration Flow")}
-                    />
+                    <animated.div
+                      // style={cardSpring}
+                      onMouseEnter={() => setHoveredCard("Integration Flow")}
+                      onMouseLeave={() => setHoveredCard(null)}
+                    >
+                      <Box
+                        sx={{
+                          width: "380px",
+                          height: "274px",
+                          textAlign: "center",
+                          borderRadius: "16px",
+                          backgroundColor: "#fff",
+
+                          cursor: "pointer",
+                          padding: "16px",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                          position: "relative",
+                        }}
+                      >
+                        <animated.div
+                          style={{
+                            position: "absolute",
+                            top: "-32px",
+                            left: "45%",
+                            transform: "translateX(-50%)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "#295bf9",
+                            borderRadius: "50%",
+                            padding: "16px",
+                            border: "2px solid #295bf9",
+                            width: "30px",
+                            height: "30px",
+                            transform: "rotate(45deg)",
+                          }}
+                        >
+                          <animated.div>
+                            <IntegrationInstructionsIcon
+                              sx={{ color: "white", fontSize: "32px" }}
+                            />
+                          </animated.div>
+                        </animated.div>
+
+                        <Typography
+                          variant="h6"
+                          sx={{ marginTop: "40px", fontSize: "18px" }}
+                        >
+                          Integration Flow
+                          <br></br>
+                          <p style={{ fontSize: "16px" }}>
+                            Create efficient workflow automation that connects
+                            to hundreds of popular cloud apps.
+                          </p>
+                        </Typography>
+
+                        <Button
+                          variant="contained"
+                          onClick={() => handleSelect("Integration Flow")}
+                          startIcon={
+                            <SelectAllIcon sx={{ fontSize: "58px" }} />
+                          }
+                          sx={{
+                            marginTop: "16px",
+                            backgroundColor: "#295bf9",
+                            "&:hover": {
+                              backgroundColor: "#1a46d0",
+                            },
+                          }}
+                        >
+                          Select
+                        </Button>
+                      </Box>
+                    </animated.div>
                   </Grid>
                 </Grid>
               </DialogContent>
+            </Dialog>
+            {/* create application popup */}
+            <Dialog
+              open={openApp}
+              onClose={handleClose}
+              fullScreen
+              sx={{
+                "& .MuiDialog-paper": {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#f7f8fc",
+                },
+              }}
+            >
+              <DialogTitle sx={{ position: "absolute", top: 0, right: 0 }}>
+                <IconButton
+                  aria-label="close"
+                  onClick={handleCloseApp}
+                  sx={{
+                    color: (theme) => theme.palette.grey[500],
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+
+              <DialogContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="h4" sx={{ marginBottom: "84px" }}>
+                  Create new application
+                </Typography>
+
+                <Grid container spacing={4} justifyContent="center">
+                  {/* Applications Card */}
+                  <Grid item xs={12} sm={4}>
+                    <animated.div
+                      // style={cardSpring}
+                      onMouseEnter={() => setHoveredCard("Create from scratch")}
+                      onMouseLeave={() => setHoveredCard(null)}
+                    >
+                      <Box
+                        sx={{
+                          width: "380px",
+                          height: "274px",
+                          textAlign: "center",
+                          borderRadius: "16px",
+                          backgroundColor: "#fff",
+
+                          cursor: "pointer",
+                          padding: "16px",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                          position: "relative",
+                        }}
+                      >
+                        <animated.div
+                          style={{
+                            position: "absolute",
+                            top: "-32px",
+                            left: "45%",
+                            transform: "translateX(-50%)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "#295bf9",
+                            borderRadius: "50%",
+                            padding: "16px",
+                            border: "2px solid #295bf9",
+                            width: "30px",
+                            height: "30px",
+                            transform: "rotate(45deg)",
+                          }}
+                        >
+                          <animated.div>
+                            <IntegrationInstructionsIcon
+                              sx={{ color: "white", fontSize: "32px" }}
+                            />
+                          </animated.div>
+                        </animated.div>
+
+                        <Typography
+                          variant="h6"
+                          sx={{ marginTop: "40px", fontSize: "18px" }}
+                        >
+                          Create from scratch
+                          <br></br>
+                          <p style={{ fontSize: "16px" }}>
+                            Create a new application for your business needs.
+                          </p>
+                        </Typography>
+
+                        <Button
+                          variant="contained"
+                          onClick={() => handleSelect("Create from scratch")}
+                          startIcon={
+                            <SelectAllIcon sx={{ fontSize: "58px" }} />
+                          }
+                          sx={{
+                            marginTop: "16px",
+                            backgroundColor: "#295bf9",
+                            "&:hover": {
+                              backgroundColor: "#1a46d0",
+                            },
+                          }}
+                        >
+                          Create
+                        </Button>
+                      </Box>
+                    </animated.div>
+                  </Grid>
+
+                  {/* BI & Analytics Card */}
+                  <Grid item xs={12} sm={4}>
+                    <animated.div
+                      // style={cardSpring}
+                      onMouseEnter={() => setHoveredCard("Create from gallery")}
+                      onMouseLeave={() => setHoveredCard(null)}
+                    >
+                      <Box
+                        sx={{
+                          width: "380px",
+                          height: "274px",
+                          textAlign: "center",
+                          borderRadius: "16px",
+                          backgroundColor: "#fff",
+
+                          cursor: "pointer",
+                          padding: "16px",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                          position: "relative",
+                        }}
+                      >
+                        <animated.div
+                          style={{
+                            position: "absolute",
+                            top: "-32px",
+                            left: "45%",
+                            transform: "translateX(-50%)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "#295bf9",
+                            borderRadius: "50%",
+                            padding: "16px",
+                            border: "2px solid #295bf9",
+                            width: "30px",
+                            height: "30px",
+                            transform: "rotate(45deg)",
+                          }}
+                        >
+                          <animated.div>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: "70px", // Define the width of the circle
+                                height: "70px", // Define the height of the circle
+                                backgroundColor: "#295bf9", // Set the background color for the circle
+                                borderRadius: "50%", // Makes the box a perfect circle
+                                border: "2px solid #fff", // White border around the circle
+                              }}
+                            >
+                              <CollectionsOutlinedIcon
+                                sx={{ color: "white", fontSize: "32px" }}
+                              />
+                            </Box>
+                          </animated.div>
+                        </animated.div>
+
+                        <Typography
+                          variant="h6"
+                          sx={{ marginTop: "40px", fontSize: "18px" }}
+                        >
+                          Create from gallery
+                          <br></br>
+                          <p style={{ fontSize: "16px" }}>
+                            Pick a pre-built application that suits your
+                            requirement.
+                          </p>
+                        </Typography>
+
+                        <Button
+                          variant="contained"
+                          onClick={() => handleSelect("Create from gallery")}
+                          startIcon={
+                            <SelectAllIcon sx={{ fontSize: "58px" }} />
+                          }
+                          sx={{
+                            marginTop: "16px",
+                            backgroundColor: "#295bf9",
+                            "&:hover": {
+                              backgroundColor: "#1a46d0",
+                            },
+                          }}
+                        >
+                          Pick
+                        </Button>
+                      </Box>
+                    </animated.div>
+                  </Grid>
+
+                  {/* Integration Flow Card */}
+                  <Grid item xs={12} sm={4}>
+                    <animated.div
+                      // style={cardSpring}
+                      onMouseEnter={() => setHoveredCard("Import from file")}
+                      onMouseLeave={() => setHoveredCard(null)}
+                    >
+                      <Box
+                        sx={{
+                          width: "380px",
+                          height: "274px",
+                          textAlign: "center",
+                          borderRadius: "16px",
+                          backgroundColor: "#fff",
+
+                          cursor: "pointer",
+                          padding: "16px",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                          position: "relative",
+                        }}
+                      >
+                        <animated.div
+                          style={{
+                            position: "absolute",
+                            top: "-32px",
+                            left: "45%",
+                            transform: "translateX(-50%)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "#295bf9",
+                            borderRadius: "50%",
+                            padding: "16px",
+                            border: "2px solid #295bf9",
+                            width: "30px",
+                            height: "30px",
+                            transform: "rotate(45deg)",
+                          }}
+                        >
+                          <animated.div>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: "70px", // Define the width of the circle
+                                height: "70px", // Define the height of the circle
+                                backgroundColor: "#295bf9", // Set the background color for the circle
+                                borderRadius: "50%", // Makes the box a perfect circle
+                                border: "2px solid #fff", // White border around the circle
+                              }}
+                            >
+                              <CloudDownloadOutlinedIcon
+                                sx={{ color: "white", fontSize: "32px" }}
+                              />
+                            </Box>
+                          </animated.div>
+                        </animated.div>
+
+                        <Typography
+                          variant="h6"
+                          sx={{ marginTop: "40px", fontSize: "18px" }}
+                        >
+                          Import from file
+                          <br></br>
+                          <p style={{ fontSize: "16px" }}>
+                            Import your existing data to create an application.
+                          </p>
+                        </Typography>
+
+                        <Button
+                          variant="contained"
+                          onClick={() => handleSelect("Import from file")}
+                          startIcon={
+                            <SelectAllIcon sx={{ fontSize: "58px" }} />
+                          }
+                          sx={{
+                            marginTop: "16px",
+                            backgroundColor: "#295bf9",
+                            "&:hover": {
+                              backgroundColor: "#1a46d0",
+                            },
+                          }}
+                        >
+                          Import
+                        </Button>
+                      </Box>
+                    </animated.div>
+                  </Grid>
+                </Grid>
+              </DialogContent>
+            </Dialog>
+
+            {/* create Application name */}
+            <Dialog
+              open={openAppName}
+              onClose={handleCloseApp}
+              fullScreen
+              sx={{
+                "& .MuiDialog-paper": {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#f7f8fc",
+                },
+              }}
+            >
+              <DialogTitle sx={{ position: "absolute", top: 0, right: 0 }}>
+                <IconButton
+                  aria-label="close"
+                  onClick={handleCloseAppName}
+                  sx={{
+                    color: (theme) => theme.palette.grey[500],
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+
+              {/* Container for both rows */}
+              <Box
+                sx={{
+                  width: 602,
+                  height: 451,
+                  backgroundColor: "#fafafc",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  border: "1px solid #d3d3d3", // Adding gray border
+                  borderRadius: "8px", // Optional: Add border-radius if needed
+                }}
+              >
+                {/* Box content */}
+
+                {/* Row 1 */}
+                <Box
+                  sx={{
+                    width: 600,
+                    height: 163,
+                    backgroundColor: "white",
+                    padding: 2,
+                  }}
+                >
+                  {/* <RadioGroup
+                    row
+                    sx={{ justifyContent: "center" }}
+                    aria-label="options"
+                    name="row-radio-buttons-group"
+                  >
+                    {[...Array(13)].map((_, index) => (
+                      <FormControlLabel
+                        key={index}
+                        value={`option-${index + 1}`}
+                        control={<Radio />}
+                        label={`Option ${index + 1}`}
+                      />
+                    ))}
+                  </RadioGroup> */}
+                </Box>
+
+                <Divider sx={{ width: 600 }} />
+
+                {/* Row 2 */}
+                <Box
+                  sx={{
+                    width: 600,
+                    height: 286,
+                    backgroundColor: "#fafafc",
+                    padding: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {/* TextField for Application Name */}
+                  <TextField
+                    label="Application Name"
+                    variant="outlined"
+                    value={dashName}
+                    onChange={(e) => setDashName(e.target.value)}
+                    sx={{ width: 500, height: 37 }}
+                  />
+
+                  {/* Button to create dashboard */}
+                  <Button
+                    variant="contained"
+                    onClick={handleCreateDashboard}
+                    sx={{
+                      width: 500,
+                      height: 48,
+                      backgroundColor: "#3f51b5",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "#303f9f",
+                      },
+                    }}
+                  >
+                    Create Dashboard
+                  </Button>
+                </Box>
+              </Box>
             </Dialog>
           </Box>
         </Box>

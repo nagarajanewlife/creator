@@ -3,10 +3,12 @@ import {
   UserCreate,
   getUserProfile,
   DashboardCreate,
+  FormCreate,
   DashboardAppsDetails,
   EmployeeCreate,
   Employeeget,
   Timesheetsget,
+  Getallforms,
   TimesheetCreate,
   Earings,
 } from "../controllers/wohozo.controllers.js"; // Ensure this path is correct
@@ -17,7 +19,11 @@ const router = express.Router();
 router.post("/addUser", UserCreate);
 router.get("/api/users/profile/:uid", getUserProfile);
 router.post("/createDashboard", DashboardCreate);
+router.post("/createDashboard", DashboardCreate);
+router.post("/createForm", FormCreate);
+
 router.get("/dashboardApplication/:uid", DashboardAppsDetails);
+router.get("forms/:uid/:dashid", Getallforms);
 
 // employees
 router.post("/employees", EmployeeCreate);
