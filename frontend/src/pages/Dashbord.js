@@ -229,7 +229,7 @@ export default function Dashboard() {
       })
       .catch((error) => {
         console.error("Error creating dashboard:", error);
-        alert("Error creating dashboard.");
+        alert("Error creating App dashboard.");
       });
   };
 
