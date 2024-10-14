@@ -3,6 +3,7 @@ import {
   Wohozouser,
   Wohozodash,
   FormTable,
+  FormItemTable,
   EmployeeTable,
   TimesheetTable,
 } from "../models/wohozo.models.js";
@@ -70,18 +71,79 @@ export const FormCreate = async (req, res) => {
   }
 };
 
-//get all form  details
-export const Getallforms = async (req, res) => {
-  const { uid, dashid } = req.params; // Get UID and dashid from route parameters
+// creare form filed
+export const FormFieldCreate = async (req, res) => {
+  const { uid, appId, formId, inputs } = req.body; // Destructure from request body
 
   try {
+    // Check if a form already exists with the given uid, appId, and formId
+    const existingForm = await FormItemTable.findOneAndUpdate(
+      { uid, appid: appId, formid: formId }, // Find by these criteria
+      { formItems: inputs }, // Update the formItems with the new inputs
+      { new: true, upsert: true } // 'new' returns the updated document, 'upsert' creates a new one if not found
+    );
+
+    // Respond with the updated or newly created form data
+    res.status(existingForm ? 200 : 201).json(existingForm);
+  } catch (error) {
+    console.error("Error saving or updating form:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+// getParticularFileld
+export const getParticularFileld = async (req, res) => {
+  const { uid, appid, formid } = req.query; // Get parameters from the query string
+
+  try {
+    // Find the form in the database
+    const form = await FormItemTable.findOne({ uid, appid, formid });
+
+    if (!form) {
+      return res.status(404).json({ message: "Form not found not" });
+    }
+
+    res.status(200).json(form); // Respond with the found form
+  } catch (error) {
+    console.error("Error retrieving form:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+export const getAllFileld = async (req, res) => {
+  const { uid, appid } = req.query; // Get parameters from the query string
+
+  try {
+    // Find the form in the database
+    const form = await FormItemTable.findOne({ uid, appid });
+
+    if (!form) {
+      return res.status(404).json({ message: "Form not found" });
+    }
+
+    res.status(200).json(form); // Respond with the found form
+  } catch (error) {
+    console.error("Error retrieving form:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+//get all form  details
+export const Getallforms = async (req, res) => {
+  const { uid } = req.params; // Get UID and dashid from route parameters
+  console.log("uid", uid);
+  try {
     // Check if both uid and dashid are provided
-    if (!uid || !dashid) {
+    if (!uid) {
       return res.status(400).json({ message: "UID and dashid are required" });
     }
 
     // Fetch records based on the provided uid and dashid
-    const allforms = await FormTable.find({ uid, dashid });
+    const allforms = await FormTable.find({ uid });
 
     // Check if any records are found
     if (allforms.length === 0) {
@@ -95,6 +157,32 @@ export const Getallforms = async (req, res) => {
   } catch (error) {
     console.error("Error fetching forms: ", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getFormIteam = async (req, res) => {
+  const { uid, appId, formId } = req.params; // Get parameters from request URL
+  console.log(uid, appId, formId);
+  try {
+    // Find the form using the provided uid, appId, and formId
+    const form = await FormItemTable.findOne({
+      uid, // User ID
+      appid: appId, // Application ID
+      formid: formId, // Form ID
+    });
+
+    // Check if form exists
+    if (!form) {
+      return res.status(404).json({ message: "Form not found ok" });
+    }
+
+    // Respond with the found form
+    res.status(200).json(form);
+  } catch (error) {
+    console.error("Error fetching form:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
 

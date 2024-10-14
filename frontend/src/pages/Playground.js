@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import InputBase from "@mui/material/InputBase";
-
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { auth } from "../components/firebase";
 import {
   AppBar,
   Toolbar,
@@ -270,14 +271,18 @@ const DropArea = ({
   onTaskClick,
   onDeleteTask,
   onUpdateInput,
+  appName,
+  formName,
   isDone,
 }) => {
   const [hoveredTask, setHoveredTask] = useState(null); // Track hovered task
   const [activeTaskId, setActiveTaskId] = useState(null); // Track active task
 
   const handleTaskClick = (task) => {
-    setActiveTaskId(task.id); // Set the clicked task as active
+    setActiveTaskId(task.uniqueId);
+    // Set the clicked task as active
   };
+
   const handleMouseEnter = (taskId) => {
     setHoveredTask(taskId); // Set the task ID when mouse enters
   };
@@ -290,6 +295,7 @@ const DropArea = ({
     onUpdateInput(id, value); // Update input value via parent
   };
 
+  // Handle drop action
   const [{ isOver }, drop] = useDrop({
     accept: ItemType.TASK,
     drop: (item) => onDrop(item.task),
@@ -297,6 +303,36 @@ const DropArea = ({
       isOver: !!monitor.isOver(),
     }),
   });
+
+  // Automatically send the dropped inputs to the backend when available
+  useEffect(() => {
+    if (droppedInputs && droppedInputs.length > 0) {
+      console.log("work", droppedInputs);
+      // Send POST request to the backend
+      const payload = {
+        uid: auth.currentUser?.uid,
+        appId: appName, // App ID
+        formId: formName, // Form ID
+        inputs: droppedInputs, // The dropped inputs array
+      };
+      axios
+        .post("http://localhost:6969/formbuilder", payload)
+        .then((response) => {
+          console.log("Form saved successfully:", response.data);
+          alert("sucess");
+        })
+        .catch((error) => {
+          console.error(
+            "Error saving the form:",
+            error.response?.data || error.message
+          );
+        });
+    }
+  }, [droppedInputs]);
+
+  const prviewForm = () => {
+    alert("console");
+  };
 
   return (
     <div
@@ -326,7 +362,7 @@ const DropArea = ({
         </div>
       )}
 
-      {droppedInputs.map((task, index) => (
+      {droppedInputs.map((task) => (
         <Paper
           key={task.uniqueId}
           component="form"
@@ -342,11 +378,14 @@ const DropArea = ({
               activeTaskId === task.uniqueId ? "#e0f7fa" : "white", // Highlight if active
           }}
           onClick={() => {
-            // Set the active task and call onTaskClick only if not done
+            // Only proceed if the task is not done
             if (!isDone) {
               onTaskClick(task);
+              // Trigger the task click event
             }
-            setActiveTaskId(task.uniqueId); // Set active task
+
+            setActiveTaskId(task.uniqueId); // Set the active task ID
+            // Fetch the form data related to the task
           }}
           onMouseEnter={() => handleMouseEnter(task.uniqueId)}
           onMouseLeave={handleMouseLeave}
@@ -356,39 +395,17 @@ const DropArea = ({
             {task.design.icon}
           </IconButton>
           {/* InputBase as task input */}
-          {!isDone ? (
-            <InputBase
-              sx={{ ml: 1, flex: 1, cursor: "pointer" }}
-              placeholder={task.properties.label}
-              inputProps={{ "aria-label": task.properties.label }}
-              value={task.value || ""}
-              onChange={(e) => {
-                if (isDone) {
-                  handleInputChange(task.uniqueId, e.target.value);
-                } else {
-                  onTaskClick(task);
-                }
-              }}
-            />
-          ) : (
-            <InputBase
-              sx={{ ml: 1, flex: 1, cursor: "pointer" }}
-              placeholder={task.properties.label}
-              inputProps={{ "aria-label": task.properties.label }}
-              value={task.value || ""}
-              onChange={(e) => {
-                if (!isDone) {
-                  onTaskClick(task);
-                }
-                handleInputChange(task.uniqueId, e.target.value);
-              }}
-              disabled={!isDone} // Disable if not allowed
-            />
-          )}
+          <InputBase
+            sx={{ ml: 1, flex: 1, cursor: "pointer" }}
+            placeholder={task.properties.label}
+            inputProps={{ "aria-label": task.properties.label }}
+            value={task.value || ""}
+            onChange={(e) => handleInputChange(task.uniqueId, e.target.value)}
+            disabled={isDone} // Disable if form is in "done" state
+          />
           {isDone ? null : (
             <>
               <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-
               <InputAdornment position="end">
                 <IconButton
                   onClick={() => onDeleteTask(task.uniqueId)}
@@ -407,8 +424,6 @@ const DropArea = ({
           )}
         </Paper>
       ))}
-
-      {/* Show additional properties when task is active */}
     </div>
   );
 };
@@ -420,7 +435,7 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [expanded, setExpanded] = useState(true);
-
+  const [formname, setFormName] = useState("");
   const [isDone, setIsDone] = useState(false);
   const [isAccessed, setIsAccessed] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
@@ -429,7 +444,7 @@ function App() {
 
   const [isSubmitEnabled, setIsSubmitEnabled] = useState(false); // Tracks if submit/reset buttons should be enabled
   const [inputValues, setInputValues] = useState({}); // Track field values
-
+  const [appName, setAppName] = useState("");
   // Function to handle input changes
   const handleInputChange = (id, value) => {
     setInputValues((prevValues) => ({
@@ -478,6 +493,7 @@ function App() {
 
   const handleTaskClick = (task) => {
     setSelectedTask(task);
+
     setDrawerOpen(true);
   };
 
@@ -876,38 +892,186 @@ function App() {
     setExpanded(!expanded);
   };
 
+  useEffect(() => {
+    // Log full URL path from the browser
+    console.log("Full URL Path:", location.pathname);
+
+    // Split the URL by '/' and extract specific parts
+    const pathParts = location.pathname.split("/");
+
+    // For example: pathParts[0] = "", pathParts[1] = "appbuilder", pathParts[2] = "TechCodeLab", pathParts[3] = "muruganapp", pathParts[4] = "edit"
+    if (pathParts.length >= 4) {
+      const decodedAppName = decodeURIComponent(pathParts[3]);
+      setAppName(decodedAppName); // "muruganapp" will be at index 3 in the array
+      const decodedFormName = decodeURIComponent(pathParts[5]);
+      setFormName(decodedFormName); // "muruganapp" will be at index 3 in the array
+    }
+  }, [location]);
+
+  useEffect(() => {
+    const fetchFormData = async () => {
+      const uid = auth.currentUser?.uid; // Use the correct property for the user ID
+
+      if (!uid) {
+        console.log("User is not authenticated");
+        return; // Exit if no user is authenticated
+      }
+      try {
+        const response = await axios.get(
+          "http://localhost:6969/formbuilder/1",
+          {
+            params: { uid, appName, formname },
+          }
+        );
+        alert("get");
+        setDroppedInputs(response.data);
+        // Set the fetched form data
+      } catch (err) {
+        console.error("Error fetching form data:", err);
+        console.log(err.response?.data?.message || "Error fetching form data");
+      }
+    };
+
+    fetchFormData();
+  }, [auth.currentUser?.id, appName, formname]);
+
   return (
     <>
       {/* AppBar */}
-      <AppBar
-        position="static"
-        sx={{ backgroundColor: "#293040", boxShadow: "none" }}
-      >
+      <AppBar position="static" sx={{ bgcolor: "#293040", height: 50 }}>
+        {/* Left side: Show dashName */}
         <Toolbar>
-          {/* Left side: Show dashName */}
-          <Typography variant="h6" sx={{ flexGrow: 1, color: "white" }}>
-            {dashName}
-          </Typography>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            style={{ marginBottom: "13px" }}
+            // onClick={toggleDrawer(true)}
+          >
+            {/* <MenuIcon /> */}
+            ::
+          </IconButton>
+
+          <Button
+            color="inherit"
+            style={{
+              height: "50px",
+              width: "250px",
+              marginBottom: "20px",
+              fontSize: "13px",
+              transition: "background-color 0.3s",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "left",
+              textTransform: "none",
+            }}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#1b202e",
+                textTransform: "none",
+              },
+            }}
+          >
+            {appName}
+            <br></br>
+            {formname}
+          </Button>
+
+          <Button
+            style={{
+              height: "50px",
+              width: "50px",
+              marginBottom: "20px",
+              borderLeft: "1px solid #1b202e",
+              borderRight: "1px solid #1b202e",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginLeft: "10px",
+              transition: "background-color 0.3s",
+            }}
+            color="inherit"
+            startIcon={<AddIcon />}
+            // onClick={openCreateFormModal}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#1b202e",
+              },
+            }}
+          />
 
           {/* Right side: Done button, Settings icon, and MoreVert icon */}
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton color="inherit">
-              <SettingsIcon sx={{ color: "white" }} />
-            </IconButton>
-            <IconButton color="inherit">
-              <MoreVertIcon sx={{ color: "white" }} />
-            </IconButton>
+          <Box
+            sx={{ display: "flex", alignItems: "center", marginLeft: "55%" }}
+          >
+            <Button
+              style={{
+                height: "50px",
+                width: "50px",
+                marginBottom: "20px",
+                borderLeft: "1px solid #1b202e",
+                borderRight: "1px solid #1b202e",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginLeft: "10px",
+                transition: "background-color 0.3s",
+              }}
+              color="inherit"
+              startIcon={<SettingsIcon />}
+              // onClick={openCreateFormModal}
+              sx={{
+                "&:hover": {
+                  backgroundColor: "#1b202e",
+                },
+              }}
+            />
+            <Button
+              style={{
+                height: "50px",
+                width: "50px",
+                marginBottom: "20px",
+                borderLeft: "1px solid #1b202e",
+                borderRight: "1px solid #1b202e",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginLeft: "10px",
+                transition: "background-color 0.3s",
+              }}
+              color="inherit"
+              startIcon={<MoreVertIcon />}
+              // onClick={openCreateFormModal}
+              sx={{
+                "&:hover": {
+                  backgroundColor: "#1b202e",
+                },
+              }}
+            />
 
             <Button
               variant="contained"
               color="primary"
+              component={Link}
+              to={`/appbuilder/${auth.currentUser?.displayName}/${appName}/form/${formname}/edit`}
               onClick={handleDoneClick}
-              sx={{ marginRight: 1 }}
+              sx={{
+                marginRight: 1,
+                height: "29px",
+                marginLeft: "12px",
+                marginBottom: "12px",
+                width: "198px",
+                fontSize: "13px",
+                textTransform: "none",
+              }}
               disabled={droppedInputs.length === 0} // Disable when droppedInputs is empty
             >
               {isDone ? (
                 <>
-                  <ElectricBoltOutlinedIcon /> Access the application
+                  <ElectricBoltOutlinedIcon
+                    style={{ width: "15px", height: "15px" }}
+                  />
+                  Access the application
                 </>
               ) : (
                 "Done"
@@ -993,6 +1157,8 @@ function App() {
                 onDeleteTask={handleDeleteTask}
                 onUpdateInput={handleUpdateInput} // Pass the function here
                 isDone={isDone}
+                appName={appName}
+                formName={formname}
               />
               {/* "Submit" and "Reset" buttons */}
               {droppedInputs.length === 0 ? null : (
