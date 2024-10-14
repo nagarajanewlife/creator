@@ -57,6 +57,41 @@ const formTable = new Schema(
     timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
   }
 );
+// form field table
+
+const FormItemTables = new Schema(
+  {
+    uid: {
+      type: String,
+      required: true, // User ID, required
+    },
+    appid: {
+      type: String,
+      required: true, // Application ID, required
+    },
+    formid: {
+      type: String,
+      required: true, // Form ID, required
+    },
+    formItems: [
+      {
+        id: { type: String, required: true }, // Unique identifier for the form item
+        type: { type: String, required: true }, // Type of form item (e.g., "Address", "Single Line")
+        design: {
+          label: { type: String, required: true }, // Label for the form item
+        },
+        position: { type: String, required: true }, // Position in the form
+        properties: {
+          type: Schema.Types.Mixed, // To accommodate dynamic properties
+        },
+        uniqueId: { type: String, required: true }, // Unique identifier for the item
+        value: { type: String, default: "" }, // Default value
+      },
+    ],
+  },
+  { timestamps: true } // Automatically manage createdAt and updatedAt fields
+);
+// Define the Schema for the entire form
 
 // employes table
 
@@ -100,11 +135,28 @@ const TimesheetSchema = new Schema({
 });
 
 // Create models
+// const formItTable = new Schema({
+//   formItems: [formItemTable], // An array of form items
+//   createdAt: { type: Date, default: Date.now },
+// });
+
+// Create a Mongoose model
+// userTable
+const Wohozodash = model("DashApplication", dashSchema);
+const FormTable = model("FormTable", formTable);
+const FormItemTable = model("FormIteamTable", FormItemTables);
+
+// admin Table
 const Wohozouser = model("Wohozouser", userSchema);
-const Wohozodash = model("Wohozodash", dashSchema);
 const EmployeeTable = model("Employee", EmployeeSchema);
 const TimesheetTable = model("Timesheet", TimesheetSchema);
-const FormTable = model("FormTable", formTable);
 
 // Export both models
-export { Wohozouser, Wohozodash, EmployeeTable, TimesheetTable, FormTable };
+export {
+  Wohozouser,
+  Wohozodash,
+  EmployeeTable,
+  TimesheetTable,
+  FormTable,
+  FormItemTable,
+};

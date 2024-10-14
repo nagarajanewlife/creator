@@ -10,6 +10,10 @@ import {
   Timesheetsget,
   Getallforms,
   TimesheetCreate,
+  getParticularFileld,
+  FormFieldCreate,
+  getAllFileld,
+  getFormIteam,
   Earings,
 } from "../controllers/wohozo.controllers.js"; // Ensure this path is correct
 
@@ -20,10 +24,18 @@ router.post("/addUser", UserCreate);
 router.get("/api/users/profile/:uid", getUserProfile);
 router.post("/createDashboard", DashboardCreate);
 router.post("/createDashboard", DashboardCreate);
+// form
 router.post("/createForm", FormCreate);
+router.get("/api/formsiteam/:uid/:appId/:formId", getFormIteam);
+// fieild textbox,dropdown ,etc ...
+router.post("/formbuilder", FormFieldCreate);
+router.get("/formbuilder/1", getParticularFileld);
+router.get("/formbuilder/all", getAllFileld);
+
+// get folmfiled
 
 router.get("/dashboardApplication/:uid", DashboardAppsDetails);
-router.get("forms/:uid/:dashid", Getallforms);
+router.get("forms/:uid/", Getallforms);
 
 // employees
 router.post("/employees", EmployeeCreate);

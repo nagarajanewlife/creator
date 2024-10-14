@@ -16,7 +16,7 @@ import Earnings from "./components/Earnings/MonthlyEarnings";
 import Unauthorized from "./pages/UnauthorizedPage";
 import CreateForm from "./pages/CreateForm";
 import { DashboardProvider } from ".//pages/DashboardContext"; // Import the provider
-
+import EditForm from "./pages/EditForm";
 // test commit
 function App() {
   const [user, setUser] = useState(null);
@@ -77,6 +77,11 @@ function App() {
             element={user ? <Playground /> : <Navigate to="/" />}
           />
           <Route
+            path={`/appbuilder/${user?.displayName}/:AppName/form/:FormName/edit`}
+            element={user ? <EditForm /> : <Navigate to="/" />}
+          />
+
+          <Route
             path="/adminDashboard"
             element={user ? <Timesheet /> : <Navigate to="/" />}
           />
@@ -89,7 +94,7 @@ function App() {
             element={user ? <Earnings /> : <Navigate to="/" />}
           />
           {/* earnings */}
-          <Route path="/edit" element={user ? <Edit /> : <Navigate to="/" />} />
+          {/* <Route path="/edit" element={user ? <Edit /> : <Navigate to="/" />} /> */}
           <Route
             path="/unauthorized"
             element={user ? <Unauthorized /> : <Navigate to="/" />}
