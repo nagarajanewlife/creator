@@ -319,7 +319,7 @@ const DropArea = ({
         .post("http://localhost:6969/formbuilder", payload)
         .then((response) => {
           console.log("Form saved successfully:", response.data);
-          alert("sucess");
+          // alert("sucess");
         })
         .catch((error) => {
           console.error(
@@ -347,7 +347,7 @@ const DropArea = ({
         borderRadius: "8px",
       }}
     >
-      {droppedInputs.length === 0 && (
+      {droppedInputs?.length === 0 && (
         <div
           style={{
             display: "flex",
@@ -362,7 +362,7 @@ const DropArea = ({
         </div>
       )}
 
-      {droppedInputs.map((task) => (
+      {droppedInputs?.map((task) => (
         <Paper
           key={task.uniqueId}
           component="form"
@@ -370,7 +370,7 @@ const DropArea = ({
             p: "2px 4px",
             display: "flex",
             alignItems: "center",
-            width: isDone ? 300 : 660,
+            width: isDone ? 250 : 600,
             border: !isDone ? "1px dashed #3987d9" : null,
             marginTop: "12px",
             cursor: "pointer",
@@ -513,7 +513,7 @@ function App() {
   };
 
   const handleSubmit = () => {
-    const payload = droppedInputs.map((input) => ({
+    const payload = droppedInputs?.map((input) => ({
       id: input.uniqueId,
       label: input.properties.label,
       value: inputValues[input.uniqueId] || "", // Send the user-entered value
@@ -878,7 +878,7 @@ function App() {
 
   const handleUpdateInput = (id, value) => {
     // Update the droppedInputs array when input values change
-    const updatedInputs = droppedInputs.map((input) =>
+    const updatedInputs = droppedInputs?.map((input) =>
       input.uniqueId === id ? { ...input, value } : input
     );
     setDroppedInputs(updatedInputs); // Update state with new input values
@@ -909,31 +909,36 @@ function App() {
   }, [location]);
 
   useEffect(() => {
-    const fetchFormData = async () => {
-      const uid = auth.currentUser?.uid; // Use the correct property for the user ID
+    // Check if all required values are available before making the API call
+    if (auth.currentUser?.uid && appName && formname) {
+      const fetchFormData = async () => {
+        const uid = auth.currentUser?.uid;
 
-      if (!uid) {
-        console.log("User is not authenticated");
-        return; // Exit if no user is authenticated
-      }
-      try {
-        const response = await axios.get(
-          "http://localhost:6969/formbuilder/1",
-          {
-            params: { uid, appName, formname },
-          }
-        );
-        alert("get");
-        setDroppedInputs(response.data);
-        // Set the fetched form data
-      } catch (err) {
-        console.error("Error fetching form data:", err);
-        console.log(err.response?.data?.message || "Error fetching form data");
-      }
-    };
+        if (!uid) {
+          console.log("User is not authenticated");
+          return; // Exit if no user is authenticated
+        }
 
-    fetchFormData();
-  }, [auth.currentUser?.id, appName, formname]);
+        const url = `http://localhost:6969/api/formsiteam/${uid}/${appName}/${formname}`;
+
+        try {
+          const response = await axios.get(url);
+          console.log("formsiteam", response.data?.formItems);
+
+          // Store the data from the response
+          setDroppedInputs(response?.data?.formItems);
+          setIsDone(false);
+        } catch (err) {
+          console.error("Error fetching form data:", err);
+          console.log(
+            err.response?.data?.message || "Error fetching form data"
+          );
+        }
+      };
+
+      fetchFormData();
+    }
+  }, [auth.currentUser?.uid, appName, formname]);
 
   return (
     <>
@@ -1064,7 +1069,7 @@ function App() {
                 fontSize: "13px",
                 textTransform: "none",
               }}
-              disabled={droppedInputs.length === 0} // Disable when droppedInputs is empty
+              disabled={droppedInputs?.length === 0} // Disable when droppedInputs is empty
             >
               {isDone ? (
                 <>
@@ -1161,7 +1166,7 @@ function App() {
                 formName={formname}
               />
               {/* "Submit" and "Reset" buttons */}
-              {droppedInputs.length === 0 ? null : (
+              {droppedInputs?.length === 0 ? null : (
                 <div style={{ marginTop: "20px" }}>
                   <Button
                     variant="contained"
@@ -1187,7 +1192,7 @@ function App() {
           </Grid>
 
           {/* Sidebar for Field Properties */}
-          {droppedInputs.length === 0 ? null : (
+          {droppedInputs?.length === 0 ? null : (
             <Grid item xs={3}>
               <AppBar
                 position="relative"

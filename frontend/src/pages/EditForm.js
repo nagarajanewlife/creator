@@ -16,7 +16,7 @@ import {
 
 import { ElectricBoltOutlined as ElectricBoltOutlinedIcon } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
-
+import DynamicForm from "./DynamicForm";
 import AddIcon from "@mui/icons-material/Add";
 import DesignServicesIcon from "@mui/icons-material/DesignServices";
 import WorkflowIcon from "@mui/icons-material/AccountTree";
@@ -37,7 +37,8 @@ const AppBarWithTabs = () => {
   const [activeButton, setActiveButton] = useState("design"); // Change state to manage active button
   const [formName1, setFormName1] = useState("");
   const [appName, setAppName] = useState("");
-
+  const [formname, setFormName] = useState("");
+  const [formItems, setFormIteam] = useState("");
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
@@ -77,15 +78,14 @@ const AppBarWithTabs = () => {
       });
   };
   useEffect(() => {
-    const d = `http://localhost:6969/forms/${auth?.currentUser?.uid}/${appName}`;
-    console.log(d);
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:6969/forms/${auth?.currentUser?.uid}/${appName}`
+          `http://localhost:6969/api/formsiteam/${auth?.currentUser?.uid}/${appName}/${formname}`
         );
 
-        console.log(response.data); // Store the data from the response
+        console.log("formsiteam", response.data); // Store the data from the response
+        setFormIteam(response.data?.formItems);
       } catch (err) {
         console.log(err.message); // Store the error message
       }
@@ -105,7 +105,12 @@ const AppBarWithTabs = () => {
 
     // For example: pathParts[0] = "", pathParts[1] = "appbuilder", pathParts[2] = "TechCodeLab", pathParts[3] = "muruganapp", pathParts[4] = "edit"
     if (pathParts.length >= 4) {
-      setAppName(pathParts[3]); // "muruganapp" will be at index 3 in the array
+      const decodedAppName = decodeURIComponent(pathParts[3]);
+
+      setAppName(decodedAppName);
+      // "muruganapp" will be at index 3 in the array
+      const decodedFormName = decodeURIComponent(pathParts[5]);
+      setFormName(decodedFormName);
     }
 
     console.log("Extracted dashName:", pathParts[3]); // Logs "muruganapp"
@@ -131,7 +136,7 @@ const AppBarWithTabs = () => {
               height: "50px",
               width: "250px",
               marginBottom: "20px",
-              fontSize: "16px",
+              fontSize: "13px",
               transition: "background-color 0.3s",
               display: "flex",
               alignItems: "center",
@@ -146,6 +151,8 @@ const AppBarWithTabs = () => {
             }}
           >
             {appName}
+            <br></br>
+            {formname}
           </Button>
 
           <Button
@@ -240,7 +247,7 @@ const AppBarWithTabs = () => {
 
           <Button
             color="inherit"
-            disabled={true}
+            disabled={false}
             onClick={toggleDrawer(true)}
             sx={{
               marginLeft: "20%",
@@ -282,17 +289,22 @@ const AppBarWithTabs = () => {
           textAlign: "center",
         }}
       >
-        <img src={Logoapp} alt="Logo" style={{ width: "150px" }} />
-        <Typography variant="h5" sx={{ mt: 2 }}>
+        <DynamicForm
+          formData={formItems}
+          appname={appName}
+          formname={formname}
+        />
+        {/* <img src={Logoapp} alt="Logo" style={{ width: "150px" }} /> */}
+        {/* <Typography variant="h5" sx={{ mt: 2 }}>
           Start building your application by creating a form
-        </Typography>
-        <Button
+        </Typography> */}
+        {/* <Button
           variant="contained"
           sx={{ mt: 3 }}
           onClick={openCreateFormModal}
         >
           Create New Form
-        </Button>
+        </Button> */}
       </Box>
 
       {/* Modal for creating form */}
