@@ -433,11 +433,13 @@ const DynamicForm = ({ formData, appname, formname, formLists }) => {
     // For simplicity, we'll just clear errors
     setErrors({});
   };
-  const groupedForms = formLists?.reduce((acc, form) => {
-    acc[form.dashid] = acc[form.dashid] || [];
-    acc[form.dashid].push(form);
-    return acc;
-  }, {});
+  const groupedForms = Array.isArray(formLists)
+    ? formLists.reduce((acc, form) => {
+        acc[form.dashid] = acc[form.dashid] || [];
+        acc[form.dashid].push(form);
+        return acc;
+      }, {})
+    : {};
   const seenDashids = new Set();
 
   return (
@@ -455,7 +457,7 @@ const DynamicForm = ({ formData, appname, formname, formLists }) => {
               border: "1px solid #ccc",
               borderRadius: 2,
               boxShadow: 3,
-              backgroundColor: "white",
+              backgroundColor: "#1c1c40",
               overflow: "hidden",
               "&:hover .edit-overlay": {
                 opacity: 1,
@@ -532,7 +534,7 @@ const DynamicForm = ({ formData, appname, formname, formLists }) => {
                 ))}
             </div>
             <Divider style={{ color: "gray" }} />
-            <Typography style={{ marginTop: "100%" }}>
+            <Typography style={{ marginTop: "100%", color: "white" }}>
               {auth?.currentUser?.displayName}
             </Typography>
           </Grid>
@@ -601,7 +603,13 @@ const DynamicForm = ({ formData, appname, formname, formLists }) => {
               )}
 
               {/* Form Title */}
-              <Typography variant="h5" component="h2" align="left" gutterBottom>
+              <Typography
+                variant="h5"
+                component="h2"
+                align="left"
+                style={{ color: "gray" }}
+                gutterBottom
+              >
                 {formname}
               </Typography>
 
