@@ -159,7 +159,32 @@ export const Getallforms = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+// getFormList
+export const getFormList = async (req, res) => {
+  const { uid } = req.params; // Change to req.params if using path params
+  console.log("uid, appId:", uid);
 
+  if (!uid) {
+    return res.status(400).json({ message: "Missing uid or appId in request" });
+  }
+
+  try {
+    // Use 'dashid' if that's the correct field name in your database
+    const form = await FormTable.find({ uid });
+    console.log("Retrieved form:", form);
+
+    if (!form) {
+      return res.status(404).json({ message: "Form not found" });
+    }
+
+    res.status(200).json(form);
+  } catch (error) {
+    console.error("Error retrieving form:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
 export const getFormIteam = async (req, res) => {
   const { uid, appId, formId } = req.params; // Get parameters from request URL
   console.log(uid, appId, formId);
