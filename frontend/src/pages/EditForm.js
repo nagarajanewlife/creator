@@ -39,6 +39,7 @@ const AppBarWithTabs = () => {
   const [appName, setAppName] = useState("");
   const [formname, setFormName] = useState("");
   const [formItems, setFormIteam] = useState("");
+  const [formLists, setFormList] = useState("");
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
@@ -84,7 +85,7 @@ const AppBarWithTabs = () => {
           `http://localhost:6969/api/formsiteam/${auth?.currentUser?.uid}/${appName}/${formname}`
         );
 
-        console.log("formsiteam", response.data); // Store the data from the response
+        // console.log("formsiteam", response.data); // Store the data from the response
         setFormIteam(response.data?.formItems);
       } catch (err) {
         console.log(err.message); // Store the error message
@@ -92,7 +93,22 @@ const AppBarWithTabs = () => {
     };
 
     fetchData();
+  }, [formname]);
+  useEffect(() => {
+    fetchFormList();
   });
+  const fetchFormList = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:6969/api/formslist/${auth?.currentUser?.uid}`
+      );
+
+      console.log("fetchFormList", response.data); // Store the data from the response
+      setFormList(response.data);
+    } catch (err) {
+      console.log(err.message); // Store the error message
+    }
+  };
 
   const location = useLocation(); // Get the current location object (URL)
   // Read dynamic params from URL
@@ -247,7 +263,7 @@ const AppBarWithTabs = () => {
 
           <Button
             color="inherit"
-            disabled={false}
+            disabled={true}
             onClick={toggleDrawer(true)}
             sx={{
               marginLeft: "20%",
@@ -291,6 +307,7 @@ const AppBarWithTabs = () => {
       >
         <DynamicForm
           formData={formItems}
+          formLists={formLists && formLists}
           appname={appName}
           formname={formname}
         />

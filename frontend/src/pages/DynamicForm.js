@@ -4,6 +4,14 @@ import PropTypes from "prop-types"; // Import PropTypes
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { auth } from "../components/firebase";
 import axios from "axios";
+import Grid from "@mui/material/Grid";
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from "@mui/material";
+
 import {
   Box,
   Button,
@@ -18,13 +26,16 @@ import {
   RadioGroup,
   Select,
   TextField,
-  Typography,
   Tooltip,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Divider from "@mui/material/Divider";
+import DescriptionIcon from "@mui/icons-material/Description"; // Example icon for formName
+import ReportIcon from "@mui/icons-material/Report"; // Example icon for report
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 
-const DynamicForm = ({ formData, appname, formname }) => {
+const DynamicForm = ({ formData, appname, formname, formLists }) => {
   const [formState, setFormState] = useState(() => {
     const initialState = {};
     if (Array.isArray(formData)) {
@@ -51,6 +62,7 @@ const DynamicForm = ({ formData, appname, formname }) => {
     }
     return initialState;
   });
+  const [activeButton, setActiveButton] = useState(null);
 
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false); // State to manage edit mode
@@ -421,111 +433,218 @@ const DynamicForm = ({ formData, appname, formname }) => {
     // For simplicity, we'll just clear errors
     setErrors({});
   };
+  const groupedForms = formLists?.reduce((acc, form) => {
+    acc[form.dashid] = acc[form.dashid] || [];
+    acc[form.dashid].push(form);
+    return acc;
+  }, {});
+  const seenDashids = new Set();
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        maxWidth: 600,
-        margin: "50px auto",
-        padding: 4,
-        border: "1px solid #ccc",
-        borderRadius: 2,
-        boxShadow: 3,
-        backgroundColor: "white",
-        overflow: "hidden",
-        "&:hover .edit-overlay": {
-          opacity: 1,
-        },
-        transition: "box-shadow 0.3s ease-in-out",
-        "&:hover": {
-          boxShadow: 6,
-        },
-      }}
-    >
-      {/* Overlay for Blur Effect and Edit Button */}
-      {!isEditing && (
-        <Box
-          className="edit-overlay"
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(255, 255, 255, 0.6)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            opacity: 0,
-            transition: "opacity 0.3s",
-            zIndex: 1,
-            cursor: "pointer",
-          }}
-          onClick={handleEdit}
-        >
-          <Tooltip title="Edit Form">
-            <Button
-              color="primary"
-              size="large"
-              component={Link}
-              to={`/appbuilder/${auth.currentUser?.displayName}/${appname}/formbuilder/${formname}/edit`}
+    <>
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={2}>
+          <Grid
+            item
+            xs={4}
+            sx={{
+              position: "relative",
+              width: 600,
+              margin: "50px auto",
+              padding: 4,
+              border: "1px solid #ccc",
+              borderRadius: 2,
+              boxShadow: 3,
+              backgroundColor: "white",
+              overflow: "hidden",
+              "&:hover .edit-overlay": {
+                opacity: 1,
+              },
+              transition: "box-shadow 0.3s ease-in-out",
+              "&:hover": {
+                boxShadow: 6,
+              },
+            }}
+          >
+            <div>
+              {groupedForms &&
+                Object.keys(groupedForms).map((dashid) => (
+                  <Accordion
+                    key={dashid}
+                    style={{ backgroundColor: "#1c1c40", color: "white" }}
+                  >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon style={{ color: "white" }} />}
+                      aria-controls={`${dashid}-content`}
+                      id={`${dashid}-header`}
+                    >
+                      <Typography style={{ textAlign: "left", width: "100%" }}>
+                        {dashid}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {groupedForms[dashid].map((form) => (
+                        <div key={form._id}>
+                          <Button
+                            startIcon={<DescriptionIcon />}
+                            style={{
+                              textTransform: "none",
+                              color: "white",
+                              backgroundColor:
+                                activeButton === form._id
+                                  ? "#5051f9"
+                                  : "transparent",
+                              justifyContent: "flex-start",
+                              width: "100%",
+                            }}
+                            component={Link}
+                            to={`/appbuilder/${auth.currentUser?.displayName}/${form.dashid}/form/${form.formName}/edit`}
+                            onClick={() => setActiveButton(form._id)}
+                          >
+                            {form.formName}
+                          </Button>
+                          <br />
+                          <Button
+                            startIcon={<ReportIcon />}
+                            style={{
+                              textTransform: "none",
+                              color: "white",
+                              backgroundColor:
+                                activeButton === `${form._id}-report`
+                                  ? "#5051f9"
+                                  : "transparent",
+                              justifyContent: "flex-start",
+                              width: "100%",
+                            }}
+                            component={Link}
+                            to={`/appbuilder/${auth.currentUser?.displayName}/${form.dashid}/form/${form.formName}/edit`}
+                            onClick={() =>
+                              setActiveButton(`${form._id}-report`)
+                            }
+                          >
+                            Report {form.formName}
+                          </Button>
+                          <br />
+                        </div>
+                      ))}
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+            </div>
+            <Divider style={{ color: "gray" }} />
+            <Typography style={{ marginTop: "100%" }}>
+              {auth?.currentUser?.displayName}
+            </Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <Box
               sx={{
+                position: "relative",
+                Width: 600,
+                margin: "50px auto",
+                padding: 4,
+                border: "1px solid #ccc",
+                borderRadius: 2,
+                boxShadow: 3,
                 backgroundColor: "white",
-                boxShadow: 1,
+                overflow: "hidden",
+                "&:hover .edit-overlay": {
+                  opacity: 1,
+                },
+                transition: "box-shadow 0.3s ease-in-out",
                 "&:hover": {
-                  backgroundColor: "grey.100",
+                  boxShadow: 6,
                 },
               }}
             >
-              Open Form Builder
-            </Button>
-          </Tooltip>
-        </Box>
-      )}
+              {/* Overlay for Blur Effect and Edit Button */}
 
-      {/* Form Title */}
-      <Typography variant="h5" component="h2" align="left" gutterBottom>
-        {formname}
-      </Typography>
+              {!isEditing && (
+                <Box
+                  className="edit-overlay"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(255, 255, 255, 0.6)",
+                    backdropFilter: "blur(4px)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    opacity: 0,
+                    transition: "opacity 0.3s",
+                    zIndex: 1,
+                    cursor: "pointer",
+                  }}
+                  onClick={handleEdit}
+                >
+                  <Tooltip title="Edit Form">
+                    <Button
+                      color="primary"
+                      size="large"
+                      component={Link}
+                      to={`/appbuilder/${auth.currentUser?.displayName}/${appname}/formbuilder/${formname}/edit`}
+                      sx={{
+                        backgroundColor: "white",
+                        boxShadow: 1,
+                        "&:hover": {
+                          backgroundColor: "grey.100",
+                        },
+                      }}
+                    >
+                      Open Form Builder
+                    </Button>
+                  </Tooltip>
+                </Box>
+              )}
 
-      {/* The Form */}
-      <form onSubmit={handleSubmit}>
-        {renderFormFields()}
+              {/* Form Title */}
+              <Typography variant="h5" component="h2" align="left" gutterBottom>
+                {formname}
+              </Typography>
 
-        {/* Action Buttons */}
-        {isEditing && (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              gap: 2,
-              mt: 2,
-            }}
-          >
-            <Button variant="contained" color="primary" type="submit">
-              Submit
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleCancelEdit}
-              startIcon={<CloseIcon />}
-            >
-              Cancel
-            </Button>
-          </Box>
-        )}
+              {/* The Form */}
+              <form onSubmit={handleSubmit}>
+                {renderFormFields()}
 
-        {/* Display General Form Errors */}
-        {errors.form && (
-          <Typography color="error" align="center" sx={{ mt: 2 }}>
-            {errors.form}
-          </Typography>
-        )}
-      </form>
-    </Box>
+                {/* Action Buttons */}
+                {isEditing && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: 2,
+                      mt: 2,
+                    }}
+                  >
+                    <Button variant="contained" color="primary" type="submit">
+                      Submit
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={handleCancelEdit}
+                      startIcon={<CloseIcon />}
+                    >
+                      Cancel
+                    </Button>
+                  </Box>
+                )}
+
+                {/* Display General Form Errors */}
+                {errors.form && (
+                  <Typography color="error" align="center" sx={{ mt: 2 }}>
+                    {errors.form}
+                  </Typography>
+                )}
+              </form>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    </>
   );
 };
 
