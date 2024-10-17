@@ -28,6 +28,7 @@ import { auth } from "../components/firebase"; // Ensure you have Firebase setup
 import Logoapp from "./images/fff.svg";
 import { DashboardContext } from "./DashboardContext";
 import { useLocation, useParams } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit"; // Icon for "Edit this application"
 
 const drawerWidth = 240;
 
@@ -131,7 +132,22 @@ const AppBarWithTabs = () => {
 
     console.log("Extracted dashName:", pathParts[3]); // Logs "muruganapp"
   }, [location]);
+  const [isAccessed, setIsAccessed] = useState(false);
 
+  // Function to handle button click
+  const handleClick = () => {
+    if (!isAccessed) {
+      // Redirect to the "Access the Application" URL
+      // window.location.href = "http://localhost:3000/wohozo/wapp1/#form:wform1/";
+    } else {
+      // Redirect to the "Edit this application" URL
+      window.location.href =
+        "http://localhost:3000/appbuilder/wohozo/wapp1/form/wform1/edit";
+    }
+
+    // Toggle the state to switch the button label and icon
+    setIsAccessed(!isAccessed);
+  };
   return (
     <>
       <AppBar position="static" sx={{ bgcolor: "#293040", height: 50 }}>
@@ -263,8 +279,7 @@ const AppBarWithTabs = () => {
 
           <Button
             color="inherit"
-            disabled={true}
-            onClick={toggleDrawer(true)}
+            onClick={handleClick}
             sx={{
               marginLeft: "20%",
               width: "230px",
@@ -272,9 +287,17 @@ const AppBarWithTabs = () => {
               textTransform: "none",
               marginBottom: "13px",
               backgroundColor: "#34649c",
-            }} // Add some margin for spacing
+            }}
           >
-            <ElectricBoltOutlinedIcon /> Access the Application
+            {isAccessed ? (
+              <>
+                <EditIcon /> Edit this application
+              </>
+            ) : (
+              <>
+                <ElectricBoltOutlinedIcon /> Access the Application
+              </>
+            )}
           </Button>
         </Toolbar>
       </AppBar>
