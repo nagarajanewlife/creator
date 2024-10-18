@@ -9,6 +9,7 @@ import { auth } from "./components/firebase"; // assuming you have this file for
 import Playground from "./pages/Playground";
 import Dashboard from "./pages/Dashbord";
 import Login from "./pages/AuthPage";
+import HomePage from "./pages/HomePage";
 import Publish from "./pages/Publish";
 import Edit from "./pages/Edit";
 import Timesheet from "./components/AdminDashboard/Dashboard";
@@ -38,6 +39,18 @@ function App() {
     <DashboardProvider>
       <Router>
         <Routes>
+          <Route
+            path="/home"
+            element={
+              user ? (
+                <Navigate
+                  to={`/userhome/${user?.displayName}/admindashboard`}
+                />
+              ) : (
+                <HomePage />
+              )
+            }
+          />
           {/* If the user is logged in, navigate to dashboard. Otherwise, show login */}
           <Route
             path="/"
