@@ -3,7 +3,7 @@ import "./home.css";
 import Login from "./AuthPage";
 export default function Home() {
   return (
-    <div>
+    <>
       <div
         style={{
           display: "flex",
@@ -15,6 +15,6 @@ export default function Home() {
         <div></div>
         <Login />
       </div>
-    </div>
+    </>
   );
 }
