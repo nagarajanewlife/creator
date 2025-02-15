@@ -108,8 +108,6 @@ export default function Dashboard() {
   const [openAppName, setOpenAppName] = useState(false); // For dashboard creation dialog
 
   const handleSelect = (label) => {
-    alert(label);
-
     // For dashboard creation dialog
     switch (label) {
       case "Applications":
