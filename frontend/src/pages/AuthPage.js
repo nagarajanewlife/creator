@@ -32,6 +32,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 const theme = createTheme();
 
 function AuthPage() {
+  const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -72,7 +73,7 @@ function AuthPage() {
           });
 
           axios
-            .post("http://localhost:6969/addUser", {
+            .post(`${REACT_APP_BACKEND_URL}addUser`, {
               uid: user.uid,
               email: user.email,
               role: "user",
@@ -120,7 +121,7 @@ function AuthPage() {
 
         // If signing in with Google, assume email is already verified
         axios
-          .post("http://localhost:6969/addUser", {
+          .post(`${REACT_APP_BACKEND_URL}addUser`, {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,

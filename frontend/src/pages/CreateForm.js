@@ -30,7 +30,7 @@ import { DashboardContext } from "./DashboardContext";
 import { useLocation, useParams } from "react-router-dom";
 
 const drawerWidth = 240;
-
+const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const AppBarWithTabs = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [createFormModal, setCreateFormModal] = useState(false);
@@ -62,7 +62,7 @@ const AppBarWithTabs = () => {
       formName: formName1,
     }; // Assuming uid from auth
     axios
-      .post("http://localhost:6969/createForm", sendData) // Replace with your API endpoint
+      .post(`${REACT_APP_BACKEND_URL}createForm`, sendData) // Replace with your API endpoint
       .then((response) => {
         alert("Form created successfully!");
 

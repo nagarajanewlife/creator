@@ -106,7 +106,7 @@ export default function Dashboard() {
   const [hoveredCard, setHoveredCard] = useState(null); // Track the hovered card
   const [openApp, setOpenApp] = useState(false); // For dashboard creation dialog
   const [openAppName, setOpenAppName] = useState(false); // For dashboard creation dialog
-
+  const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const handleSelect = (label) => {
     // For dashboard creation dialog
     switch (label) {
@@ -168,11 +168,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     getApplication();
-  });
+  }, []);
 
   const getApplication = () => {
     axios
-      .get(`http://localhost:6969/dashboardApplication/${user?.uid}`)
+      .get(`${REACT_APP_BACKEND_URL}dashboardApplication/${user?.uid}`)
 
       .then((response) => {
         setDashApps(response.data);
@@ -215,7 +215,7 @@ export default function Dashboard() {
 
     const sendData = { uid: uid, dashName: dashName };
     axios
-      .post("http://localhost:6969/createDashboard", sendData)
+      .post(`${REACT_APP_BACKEND_URL}createDashboard`, sendData)
       .then((response) => {
         alert("Dashboard created successfully!");
         setFormNameC(dashName);

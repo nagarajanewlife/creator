@@ -303,6 +303,7 @@ const DropArea = ({
       isOver: !!monitor.isOver(),
     }),
   });
+  const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   // Automatically send the dropped inputs to the backend when available
   useEffect(() => {
@@ -316,7 +317,7 @@ const DropArea = ({
         inputs: droppedInputs, // The dropped inputs array
       };
       axios
-        .post("http://localhost:6969/formbuilder", payload)
+        .post(`${REACT_APP_BACKEND_URL}formbuilder`, payload)
         .then((response) => {
           console.log("Form saved successfully:", response.data);
           // alert("sucess");

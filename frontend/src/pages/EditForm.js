@@ -34,6 +34,8 @@ import EditIcon from "@mui/icons-material/Edit"; // Icon for "Edit this applicat
 const drawerWidth = 240;
 
 const AppBarWithTabs = () => {
+  const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [createFormModal, setCreateFormModal] = useState(false);
   const [activeButton, setActiveButton] = useState("design"); // Change state to manage active button
@@ -66,7 +68,7 @@ const AppBarWithTabs = () => {
       formName: formName1,
     }; // Assuming uid from auth
     axios
-      .post("http://localhost:6969/createForm", sendData) // Replace with your API endpoint
+      .post(`${REACT_APP_BACKEND_URL}createForm`, sendData) // Replace with your API endpoint
       .then((response) => {
         alert("Form created successfully!");
 
@@ -84,7 +86,7 @@ const AppBarWithTabs = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:6969/api/formsiteam/${auth?.currentUser?.uid}/${appName}/${formname}`
+          `${REACT_APP_BACKEND_URL}api/formsiteam/${auth?.currentUser?.uid}/${appName}/${formname}`
         );
 
         // console.log("formsiteam", response.data); // Store the data from the response
@@ -102,7 +104,7 @@ const AppBarWithTabs = () => {
   const fetchFormList = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:6969/api/formslist/${auth?.currentUser?.uid}`
+        `${REACT_APP_BACKEND_URL}api/formslist/${auth?.currentUser?.uid}`
       );
 
       // console.log("fetchFormList", response.data); // Store the data from the response
@@ -144,8 +146,7 @@ const AppBarWithTabs = () => {
       // window.location.href = "http://localhost:3000/wohozo/wapp1/#form:wform1/";
     } else {
       // Redirect to the "Edit this application" URL
-      window.location.href =
-        "http://localhost:3000/appbuilder/wohozo/wapp1/form/wform1/edit";
+      window.location.href = "/appbuilder/wohozo/wapp1/form/wform1/edit";
     }
 
     // Toggle the state to switch the button label and icon

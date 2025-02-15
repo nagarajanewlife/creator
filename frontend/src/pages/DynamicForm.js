@@ -63,6 +63,7 @@ const DynamicForm = ({ formData, appname, formname, formLists, publish }) => {
     return initialState;
   });
   const [activeButton, setActiveButton] = useState(null);
+  const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false); // State to manage edit mode
@@ -390,7 +391,7 @@ const DynamicForm = ({ formData, appname, formname, formLists, publish }) => {
 
     try {
       // Replace with your API endpoint
-      const apiEndpoint = "http://localhost:6969/api/insert/Form";
+      const apiEndpoint = `${REACT_APP_BACKEND_URL}api/insert/Form`;
       // uid, dashid, formname
       const uid = auth?.currentUser?.uid;
       const dashid = appname;
