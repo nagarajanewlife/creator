@@ -1,5 +1,5 @@
 // src/DynamicForm.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types"; // Import PropTypes
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { auth } from "../components/firebase";
@@ -35,7 +35,7 @@ import ReportIcon from "@mui/icons-material/Report"; // Example icon for report
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 
-const DynamicForm = ({ formData, appname, formname, formLists }) => {
+const DynamicForm = ({ formData, appname, formname, formLists, publish }) => {
   const [formState, setFormState] = useState(() => {
     const initialState = {};
     if (Array.isArray(formData)) {
@@ -66,7 +66,10 @@ const DynamicForm = ({ formData, appname, formname, formLists }) => {
 
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false); // State to manage edit mode
-
+  useEffect(() => {
+    setIsEditing(publish);
+    // alert(publish);
+  }, []);
   // Handle change for input fields
   const handleChange = (e, field) => {
     const { name, value, type, checked } = e.target;
@@ -139,6 +142,7 @@ const DynamicForm = ({ formData, appname, formname, formLists }) => {
           return (
             <FormControl key={uniqueId} fullWidth margin="normal">
               <TextField
+                style={{ width: 300, height: 20 }}
                 type={
                   type === "Email"
                     ? "email"
@@ -176,6 +180,7 @@ const DynamicForm = ({ formData, appname, formname, formLists }) => {
           return (
             <FormControl key={uniqueId} fullWidth margin="normal">
               <TextField
+                style={{ width: 300, height: 20 }}
                 label={
                   mandatory ? (
                     <span>
@@ -385,15 +390,30 @@ const DynamicForm = ({ formData, appname, formname, formLists }) => {
 
     try {
       // Replace with your API endpoint
-      const apiEndpoint = "https://your-api-endpoint.com/submit";
-
+      const apiEndpoint = "http://localhost:6969/api/insert/Form";
+      // uid, dashid, formname
+      const uid = auth?.currentUser?.uid;
+      const dashid = appname;
+      const formnames = formname;
       // Prepare data for submission
-      const submissionData = { ...formState };
+
+      const submissionData = {
+        ...formState, // Spread the current form state (dynamic fields)
+        uid, // Add UID
+        dashid, // Add Dash ID (App Name)
+        formnames, // Add Form Name
+      };
+      console.log("submissionData", submissionData);
 
       // If multi-select fields return arrays, handle them as needed by your API
       // For example, convert arrays to comma-separated strings or send as-is if API accepts arrays
 
-      const response = await axios.post(apiEndpoint, submissionData);
+      //const response = await axios.post(apiEndpoint, submissionData);
+      const response = await axios.post(apiEndpoint, submissionData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       console.log("Form submitted successfully:", response.data);
       alert("Form submitted successfully!");

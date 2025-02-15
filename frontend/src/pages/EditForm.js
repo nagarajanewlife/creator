@@ -13,6 +13,7 @@ import {
   DialogTitle,
   Divider,
 } from "@mui/material";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
 import { ElectricBoltOutlined as ElectricBoltOutlinedIcon } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -104,7 +105,7 @@ const AppBarWithTabs = () => {
         `http://localhost:6969/api/formslist/${auth?.currentUser?.uid}`
       );
 
-      console.log("fetchFormList", response.data); // Store the data from the response
+      // console.log("fetchFormList", response.data); // Store the data from the response
       setFormList(response.data);
     } catch (err) {
       console.log(err.message); // Store the error message
@@ -133,10 +134,12 @@ const AppBarWithTabs = () => {
     console.log("Extracted dashName:", pathParts[3]); // Logs "muruganapp"
   }, [location]);
   const [isAccessed, setIsAccessed] = useState(false);
-
+  const [publishtrue, setPublish] = useState(false);
   // Function to handle button click
   const handleClick = () => {
     if (!isAccessed) {
+      // alert(isAccessed);
+      setPublish(true);
       // Redirect to the "Access the Application" URL
       // window.location.href = "http://localhost:3000/wohozo/wapp1/#form:wform1/";
     } else {
@@ -280,6 +283,8 @@ const AppBarWithTabs = () => {
           <Button
             color="inherit"
             onClick={handleClick}
+            component={Link}
+            to={`/${auth?.currentUser.displayName}/${appName}/#Form:${formname}`}
             sx={{
               marginLeft: "20%",
               width: "230px",
@@ -333,6 +338,7 @@ const AppBarWithTabs = () => {
           formLists={formLists && formLists}
           appname={appName}
           formname={formname}
+          publish={publishtrue}
         />
         {/* <img src={Logoapp} alt="Logo" style={{ width: "150px" }} /> */}
         {/* <Typography variant="h5" sx={{ mt: 2 }}>

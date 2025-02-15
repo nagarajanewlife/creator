@@ -93,6 +93,16 @@ const FormItemTables = new Schema(
 );
 // Define the Schema for the entire form
 
+//DynamicModelFormTable
+const dynamicFormSchema = new Schema(
+  {
+    uid: { type: String, required: true }, // Static field: must always be present
+    dashid: { type: String, required: true }, // Static field: must always be present
+    formnames: { type: String, required: true }, // Static field: must always be present
+  },
+  { strict: false }
+); // Allow other dynamic fields not specified in the schema
+
 // employes table
 
 const EmployeeSchema = new Schema({
@@ -145,6 +155,7 @@ const TimesheetSchema = new Schema({
 const Wohozodash = model("DashApplication", dashSchema);
 const FormTable = model("FormTable", formTable);
 const FormItemTable = model("FormIteamTable", FormItemTables);
+const DynamicModelFormTable = model("DynamicFormTable", dynamicFormSchema);
 
 // admin Table
 const Wohozouser = model("Wohozouser", userSchema);
@@ -159,4 +170,5 @@ export {
   TimesheetTable,
   FormTable,
   FormItemTable,
+  DynamicModelFormTable,
 };

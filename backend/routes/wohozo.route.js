@@ -15,10 +15,12 @@ import {
   getAllFileld,
   getFormIteam,
   getFormList,
+  InsertForm,
   Earings,
 } from "../controllers/wohozo.controllers.js"; // Ensure this path is correct
 
 const router = express.Router();
+router.use(express.json()); // Middleware to parse JSON bodies
 
 // Define the routes
 router.post("/addUser", UserCreate);
@@ -39,6 +41,8 @@ router.get("/formbuilder/all", getAllFileld);
 
 router.get("/dashboardApplication/:uid", DashboardAppsDetails);
 router.get("forms/:uid/", Getallforms);
+
+router.post("/api/insert/Form", InsertForm);
 
 // employees
 router.post("/employees", EmployeeCreate);

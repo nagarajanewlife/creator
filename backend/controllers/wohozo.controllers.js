@@ -6,6 +6,7 @@ import {
   FormItemTable,
   EmployeeTable,
   TimesheetTable,
+  DynamicModelFormTable,
 } from "../models/wohozo.models.js";
 
 // Create a new user
@@ -53,7 +54,7 @@ export const DashboardCreate = async (req, res) => {
 };
 // form taable create
 export const FormCreate = async (req, res) => {
-  console.log("Request body:", req.body); // Log the request body to check the payload
+  // console.log("Request body:", req.body); // Log the request body to check the payload
 
   const newFormAdd = new FormTable({
     uid: req.body.uid,
@@ -63,7 +64,7 @@ export const FormCreate = async (req, res) => {
 
   try {
     const formAdd = await newFormAdd.save();
-    console.log("Form saved:", formAdd); // Log the saved form details
+    // console.log("Form saved:", formAdd); // Log the saved form details
     return res.status(201).json(formAdd);
   } catch (error) {
     console.error("Error saving form:", error); // Log the error
@@ -93,6 +94,43 @@ export const FormFieldCreate = async (req, res) => {
   }
 };
 
+// InsertForm data
+export const InsertForm = async (req, res) => {
+  try {
+    // Extract data from the request body
+    const { uid, dashid, formnames, ...dynamicFields } = req.body;
+    console.log("req.body", req.body);
+    // Validate that the required fields are present
+    // if (!uid || !dashid || !formnames) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "uid, dashid, and formname are required fields." });
+    // }
+
+    // Combine the constant fields and dynamic fields into one object
+    const data = {
+      uid,
+      dashid,
+      formnames,
+      ...dynamicFields, // Spread dynamic fields (the rest of the form fields)
+    };
+    console.log("data", data);
+    // Create a new record using the model
+    const record = new DynamicModelFormTable(data);
+    console.log("record", record);
+    // Save the record to MongoDB
+    await record.save();
+
+    // Respond with success message
+    res.status(201).json({ message: "Form inserted successfully", record });
+  } catch (error) {
+    // Handle errors during insertion
+    console.error("Error inserting form:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while inserting the form" });
+  }
+};
 // getParticularFileld
 export const getParticularFileld = async (req, res) => {
   const { uid, appid, formid } = req.query; // Get parameters from the query string
@@ -135,7 +173,7 @@ export const getAllFileld = async (req, res) => {
 //get all form  details
 export const Getallforms = async (req, res) => {
   const { uid } = req.params; // Get UID and dashid from route parameters
-  console.log("uid", uid);
+  // console.log("uid", uid);
   try {
     // Check if both uid and dashid are provided
     if (!uid) {
@@ -162,7 +200,7 @@ export const Getallforms = async (req, res) => {
 // getFormList
 export const getFormList = async (req, res) => {
   const { uid } = req.params; // Change to req.params if using path params
-  console.log("uid, appId:", uid);
+  // console.log("uid, appId:", uid);
 
   if (!uid) {
     return res.status(400).json({ message: "Missing uid or appId in request" });
@@ -171,7 +209,7 @@ export const getFormList = async (req, res) => {
   try {
     // Use 'dashid' if that's the correct field name in your database
     const form = await FormTable.find({ uid });
-    console.log("Retrieved form:", form);
+    // console.log("Retrieved form:", form);
 
     if (!form) {
       return res.status(404).json({ message: "Form not found" });
@@ -187,7 +225,7 @@ export const getFormList = async (req, res) => {
 };
 export const getFormIteam = async (req, res) => {
   const { uid, appId, formId } = req.params; // Get parameters from request URL
-  console.log(uid, appId, formId);
+  // console.log(uid, appId, formId);
   try {
     // Find the form using the provided uid, appId, and formId
     const form = await FormItemTable.findOne({
