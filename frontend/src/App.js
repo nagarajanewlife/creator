@@ -18,6 +18,7 @@ import Unauthorized from "./pages/UnauthorizedPage";
 import CreateForm from "./pages/CreateForm";
 import { DashboardProvider } from ".//pages/DashboardContext"; // Import the provider
 import EditForm from "./pages/EditForm";
+
 // test commit
 function App() {
   const [user, setUser] = useState(null);
@@ -88,6 +89,17 @@ function App() {
           <Route
             path={`/appbuilder/${user?.displayName}/:AppName/formbuilder/:FormName/edit`}
             element={user ? <Playground /> : <Navigate to="/" />}
+          />
+          {/* Publish */}
+          <Route
+            path={`/${user?.displayName}/:AppName/*`}
+            element={user ? <Publish /> : <Navigate to="/" />}
+          />
+
+          {/* Report */}
+          <Route
+            path={`/appbuilder/${user?.displayName}/:AppName/report/:FormName/edit`}
+            element={user ? <EditForm /> : <Navigate to="/" />}
           />
           <Route
             path={`/appbuilder/${user?.displayName}/:AppName/form/:FormName/edit`}
