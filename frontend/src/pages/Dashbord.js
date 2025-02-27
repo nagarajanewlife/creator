@@ -466,7 +466,7 @@ export default function Dashboard() {
                       },
                     }}
                   >
-                    Create Solution
+                    Create $olution
                   </Button>
                 )}
               </Toolbar>
