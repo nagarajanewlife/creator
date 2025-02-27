@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
@@ -167,21 +167,26 @@ export default function Dashboard() {
   }, [navigate]);
 
   useEffect(() => {
-    getApplication();
-  }, []);
+    if (user?.uid) {
+      getApplication();
+    }
+  }, [user?.uid]); // user?.uid update ஆனபோது மட்டும் API call செய்யும்
 
-  const getApplication = () => {
+  const getApplication = useCallback(() => {
     axios
       .get(`${REACT_APP_BACKEND_URL}dashboardApplication/${user?.uid}`)
-
       .then((response) => {
         setDashApps(response.data);
-        setFilteredApps(response.data); // Initially show all apps
+        setFilteredApps(response.data);
       })
       .catch((error) => {
         console.error("Error getting dashboard Apps:", error);
       });
-  };
+  }, [user?.uid]); // user?.uid update ஆனால் மட்டும் function recreate ஆகும்
+
+  useEffect(() => {
+    getApplication();
+  }, [getApplication]);
 
   const handleMenuItemClick = (id) => {
     setActiveItem(id); // Set the clicked item as active
@@ -341,6 +346,7 @@ export default function Dashboard() {
 
       {/* Main content */}
       <Box sx={{ display: "flex", position: "fixed" }}>
+        {/* side menu */}
         <Drawer
           variant="permanent"
           sx={{
@@ -407,6 +413,7 @@ export default function Dashboard() {
             )}
           </List>
         </Drawer>
+
         <Box
           component="main"
           sx={{ flexGrow: 1, backgroundColor: "white", padding: "2px" }}
